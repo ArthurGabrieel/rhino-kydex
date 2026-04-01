@@ -26,17 +26,54 @@ export const kpis = {
   tempoMedioProducao: "2h 18min",
 };
 
-// === TENDÊNCIAS DE VENDAS (últimas 8 semanas) ===
-export const vendasSemanais = [
-  { semana: "Sem 1", moldagem: 18, acabamento: 15, expedicao: 12 },
-  { semana: "Sem 2", moldagem: 22, acabamento: 18, expedicao: 16 },
-  { semana: "Sem 3", moldagem: 19, acabamento: 21, expedicao: 18 },
-  { semana: "Sem 4", moldagem: 25, acabamento: 23, expedicao: 20 },
-  { semana: "Sem 5", moldagem: 28, acabamento: 24, expedicao: 22 },
-  { semana: "Sem 6", moldagem: 31, acabamento: 27, expedicao: 25 },
-  { semana: "Sem 7", moldagem: 29, acabamento: 30, expedicao: 28 },
-  { semana: "Sem 8", moldagem: 35, acabamento: 32, expedicao: 30 },
+// === TENDÊNCIAS DE PRODUÇÃO — datasets por período ===
+// 7D → diário (7 pontos)
+export const dados7d = [
+  { label: "Seg", moldagem: 4,  acabamento: 3,  expedicao: 2  },
+  { label: "Ter", moldagem: 6,  acabamento: 5,  expedicao: 4  },
+  { label: "Qua", moldagem: 5,  acabamento: 6,  expedicao: 5  },
+  { label: "Qui", moldagem: 7,  acabamento: 5,  expedicao: 6  },
+  { label: "Sex", moldagem: 8,  acabamento: 7,  expedicao: 6  },
+  { label: "Sáb", moldagem: 3,  acabamento: 4,  expedicao: 3  },
+  { label: "Dom", moldagem: 2,  acabamento: 2,  expedicao: 2  },
 ];
+
+// 30D → semanal (4 semanas)
+export const dados30d = [
+  { label: "Sem 01",  moldagem: 22, acabamento: 19, expedicao: 16 },
+  { label: "Sem 02",  moldagem: 26, acabamento: 22, expedicao: 18 },
+  { label: "Sem 03",  moldagem: 29, acabamento: 25, expedicao: 22 },
+  { label: "Sem 04",  moldagem: 35, acabamento: 32, expedicao: 28 },
+];
+
+// 90D → quinzenal (6 pontos)
+export const dados90d = [
+  { label: "Jan/1",  moldagem: 18, acabamento: 15, expedicao: 12 },
+  { label: "Jan/2",  moldagem: 22, acabamento: 18, expedicao: 16 },
+  { label: "Fev/1",  moldagem: 25, acabamento: 22, expedicao: 19 },
+  { label: "Fev/2",  moldagem: 28, acabamento: 25, expedicao: 21 },
+  { label: "Mar/1",  moldagem: 31, acabamento: 28, expedicao: 25 },
+  { label: "Mar/2",  moldagem: 35, acabamento: 32, expedicao: 30 },
+];
+
+// YTD → mensal (12 meses)
+export const dadosYtd = [
+  { label: "Jan", moldagem: 82,  acabamento: 74,  expedicao: 65  },
+  { label: "Fev", moldagem: 95,  acabamento: 88,  expedicao: 79  },
+  { label: "Mar", moldagem: 110, acabamento: 99,  expedicao: 91  },
+  { label: "Abr", moldagem: 105, acabamento: 97,  expedicao: 88  },
+  { label: "Mai", moldagem: 118, acabamento: 108, expedicao: 97  },
+  { label: "Jun", moldagem: 122, acabamento: 114, expedicao: 103 },
+  { label: "Jul", moldagem: 130, acabamento: 121, expedicao: 112 },
+  { label: "Ago", moldagem: 127, acabamento: 119, expedicao: 108 },
+  { label: "Set", moldagem: 135, acabamento: 127, expedicao: 118 },
+  { label: "Out", moldagem: 142, acabamento: 133, expedicao: 124 },
+  { label: "Nov", moldagem: 138, acabamento: 130, expedicao: 121 },
+  { label: "Dez", moldagem: 148, acabamento: 140, expedicao: 131 },
+];
+
+// Compat: mantido para imports existentes
+export const vendasSemanais = dados30d.map((d) => ({ semana: d.label, ...d }));
 
 // === KANBAN — PEDIDOS (types re-exported from @/components/kanban/types) ===
 

@@ -510,3 +510,46 @@ body {
 ::-webkit-scrollbar-track { background: var(--surface-container-lowest); }
 ::-webkit-scrollbar-thumb { background: var(--surface-container-high); }
 ::-webkit-scrollbar-thumb:hover { background: var(--outline-variant); }
+
+/* ============================================================
+   DASHBOARD — Animations & Utilities
+   ============================================================ */
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.75); }
+}
+
+.live-dot {
+  animation: pulse-dot 1.4s ease-in-out infinite;
+  display: inline-block;
+}
+
+/* Staggered reveal — applied via delay CSS var */
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.reveal-up {
+  animation: revealUp 0.45s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* Date range pill active state */
+.range-btn-active {
+  background: var(--primary) !important;
+  color: var(--on-primary) !important;
+}
+
+/* KPI value — large tactical number */
+.kpi-value {
+  font-family: var(--font-headline);
+  font-size: 2.125rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+/* Trend badge */
+.trend-up   { color: #7ec88e; }
+.trend-down { color: var(--tertiary); }
