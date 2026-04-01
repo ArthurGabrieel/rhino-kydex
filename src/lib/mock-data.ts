@@ -1,0 +1,122 @@
+// RHINO KYDEX — Mock Data Layer
+// All production data is mocked for frontend demonstration
+import type { Pedido, KanbanStatus } from "@/components/kanban/types";
+
+export type { Pedido, KanbanStatus };
+
+// === OPERADORES ===
+export const operadores = [
+  { id: 1, nome: "Jorge", sobrenome: "Matos", nivel: "Sênior", avatar: "JM", coldres: 45, eficiencia: 94 },
+  { id: 2, nome: "Ricardo", sobrenome: "Ferreira", nivel: "Pleno", avatar: "RF", coldres: 38, eficiencia: 82 },
+  { id: 3, nome: "Marcos", sobrenome: "Oliveira", nivel: "Junior", avatar: "MO", coldres: 22, eficiencia: 71 },
+];
+
+export const operadorAtivo = operadores[0];
+
+// === KPIs DASHBOARD ===
+export const kpis = {
+  pedidosMes: 127,
+  metaMensal: 150,
+  pedidosMesAnterior: 109,
+  itensEmProducao: 34,
+  alertasAtivos: 3,
+  receitaMes: 48750,
+  receitaMesAnterior: 41200,
+  tempoMedioProducao: "2h 18min",
+};
+
+// === TENDÊNCIAS DE VENDAS (últimas 8 semanas) ===
+export const vendasSemanais = [
+  { semana: "Sem 1", moldagem: 18, acabamento: 15, expedicao: 12 },
+  { semana: "Sem 2", moldagem: 22, acabamento: 18, expedicao: 16 },
+  { semana: "Sem 3", moldagem: 19, acabamento: 21, expedicao: 18 },
+  { semana: "Sem 4", moldagem: 25, acabamento: 23, expedicao: 20 },
+  { semana: "Sem 5", moldagem: 28, acabamento: 24, expedicao: 22 },
+  { semana: "Sem 6", moldagem: 31, acabamento: 27, expedicao: 25 },
+  { semana: "Sem 7", moldagem: 29, acabamento: 30, expedicao: 28 },
+  { semana: "Sem 8", moldagem: 35, acabamento: 32, expedicao: 30 },
+];
+
+// === KANBAN — PEDIDOS (types re-exported from @/components/kanban/types) ===
+
+export const pedidos: Pedido[] = [
+  // Pedidos Abertos
+  { id: "P-2401", ref: "PED-2401", cliente: "Sgto. Almeida", modelo: "IWB Tático", arma: "Glock G17 Gen5", cor: "Flat Dark Earth", prioridade: "alta", status: "aberto", hora: "09:15" },
+  { id: "P-2402", ref: "PED-2402", cliente: "Det. Lima", modelo: "OWB Duty", arma: "Taurus PT92", cor: "Preto Fosco", prioridade: "media", status: "aberto", hora: "10:30" },
+  { id: "P-2403", ref: "PED-2403", cliente: "Cel. Barros", modelo: "IWB Slim", arma: "Sig Sauer P320", cor: "Preto Fosco", prioridade: "normal", status: "aberto", hora: "11:00" },
+
+  // Preparação
+  { id: "P-2395", ref: "PED-2395", cliente: "INS. Costa", modelo: "OWB Tático", arma: "Glock G19", cor: "Preto Fosco", prioridade: "alta", status: "preparacao", hora: "08:00", operador: "Marcos" },
+  { id: "P-2396", ref: "PED-2396", cliente: "Tte. Souza", modelo: "IWB Tático", arma: "Smith & Wesson M&P 9", cor: "Coyote", prioridade: "media", status: "preparacao", hora: "08:30", operador: "Ricardo" },
+
+  // Moldagem
+  { id: "P-2388", ref: "PED-2388", cliente: "Sgt. Pereira", modelo: "IWB Appendix", arma: "Glock G43X", cor: "Preto Fosco", prioridade: "alta", status: "moldagem", hora: "07:15", operador: "Jorge" },
+  { id: "P-2389", ref: "PED-2389", cliente: "CB. Nunes", modelo: "OWB Duty", arma: "Beretta 92FS", cor: "Ranger Green", prioridade: "normal", status: "moldagem", hora: "07:45", operador: "Ricardo" },
+  { id: "P-2390", ref: "PED-2390", cliente: "TC. Ramos", modelo: "IWB Tático", arma: "HK VP9", cor: "Flat Dark Earth", prioridade: "media", status: "moldagem", hora: "08:10", operador: "Marcos" },
+
+  // Acabamento
+  { id: "P-2380", ref: "PED-2380", cliente: "Maj. Ferreira", modelo: "OWB Competition", arma: "CZ Shadow 2", cor: "Preto Fosco", prioridade: "alta", status: "acabamento", hora: "06:00", operador: "Jorge" },
+  { id: "P-2381", ref: "PED-2381", cliente: "Cap. Vieira", modelo: "IWB Slim", arma: "Walther PDP", cor: "Preto Fosco", prioridade: "media", status: "acabamento", hora: "06:30", operador: "Ricardo" },
+
+  // Expedição
+  { id: "P-2370", ref: "PED-2370", cliente: "Ten. Cardoso", modelo: "IWB Tático", arma: "Glock G17", cor: "Preto Fosco", prioridade: "normal", status: "expedicao", hora: "Concluído 10:15", operador: "Jorge" },
+  { id: "P-2371", ref: "PED-2371", cliente: "Sgt. Dias", modelo: "OWB Duty", arma: "Taurus T9AF", cor: "Preto Fosco", prioridade: "media", status: "expedicao", hora: "Concluído 09:40", operador: "Marcos" },
+];
+
+// === ESTOQUE (Inventory) ===
+export interface ItemEstoque {
+  id: string;
+  ref: string;
+  nome: string;
+  categoria: "material" | "hardware" | "produto_final";
+  quantidade: number;
+  unidade: string;
+  minimo: number;
+  localizacao: string;
+  status: "ok" | "alerta" | "critico";
+}
+
+export const estoque: ItemEstoque[] = [
+  { id: "1", ref: "KY-BLK-02", nome: "Kydex Sheet - Tactical Black 2mm", categoria: "material", quantidade: 8, unidade: "FLS", minimo: 20, localizacao: "A-01", status: "critico" },
+  { id: "2", ref: "KY-FDE-02", nome: "Kydex Sheet - Flat Dark Earth 2mm", categoria: "material", quantidade: 45, unidade: "FLS", minimo: 20, localizacao: "A-02", status: "ok" },
+  { id: "3", ref: "KY-COY-02", nome: "Kydex Sheet - Coyote Brown 2mm", categoria: "material", quantidade: 22, unidade: "FLS", minimo: 15, localizacao: "A-03", status: "ok" },
+  { id: "4", ref: "KY-GRN-02", nome: "Kydex Sheet - Ranger Green 2mm", categoria: "material", quantidade: 14, unidade: "FLS", minimo: 15, localizacao: "A-04", status: "alerta" },
+  { id: "5", ref: "HW-CHI-025", nome: "Parafuso Chicago 1/4\" Zincado", categoria: "hardware", quantidade: 2840, unidade: "UN", minimo: 500, localizacao: "B-01", status: "ok" },
+  { id: "6", ref: "HW-EYE-88", nome: "Ilhós #88 Black Oxide", categoria: "hardware", quantidade: 1200, unidade: "UN", minimo: 300, localizacao: "B-02", status: "ok" },
+  { id: "7", ref: "HW-RVT-04", nome: "Rebite 4mm Latão Preto", categoria: "hardware", quantidade: 180, unidade: "UN", minimo: 200, localizacao: "B-03", status: "alerta" },
+  { id: "8", ref: "MAT-FOM-05", nome: "Foam Padding - Soft Touch 5mm", categoria: "material", quantidade: 35, unidade: "FLS", minimo: 10, localizacao: "C-01", status: "ok" },
+  { id: "9", ref: "MAT-ELS-02", nome: "Elástico Tático 20mm Preto", categoria: "material", quantidade: 120, unidade: "MT", minimo: 50, localizacao: "C-02", status: "ok" },
+  { id: "10", ref: "FIN-GLK-17", nome: "Rhino Holster IWB - Glock G17 Gen5", categoria: "produto_final", quantidade: 12, unidade: "UN", minimo: 5, localizacao: "D-01", status: "ok" },
+  { id: "11", ref: "FIN-GLK-19", nome: "Rhino Holster IWB - Glock G19", categoria: "produto_final", quantidade: 3, unidade: "UN", minimo: 5, localizacao: "D-02", status: "alerta" },
+  { id: "12", ref: "FIN-T92-01", nome: "Rhino Holster OWB - Taurus PT92", categoria: "produto_final", quantidade: 7, unidade: "UN", minimo: 3, localizacao: "D-03", status: "ok" },
+];
+
+// === LOG DE ATIVIDADES ===
+export interface LogEntry {
+  id: string;
+  hora: string;
+  tipo: "saida" | "alerta" | "entrada" | "auth" | "producao";
+  mensagem: string;
+}
+
+export const logAtividades: LogEntry[] = [
+  { id: "1", hora: "14:32:18", tipo: "producao", mensagem: "PED-2380 CONCLUIDO → EXPEDICAO por JORGE" },
+  { id: "2", hora: "14:21:05", tipo: "saida", mensagem: "OUTGOING: FIN-GLK-17 (-2 UN) · Solicitante: JORGE" },
+  { id: "3", hora: "14:18:22", tipo: "alerta", mensagem: "ALERT: KY-BLK-02 BELOW MINIMUM (8/20 FLS)" },
+  { id: "4", hora: "14:10:45", tipo: "entrada", mensagem: "INCOMING: HW-CHI-025 (+1000 UN) · Fornecedor: TAC SUPPLY" },
+  { id: "5", hora: "13:55:12", tipo: "auth", mensagem: "USER: OPERADOR_JORGE AUTH_OK · Session: SES-4821" },
+  { id: "6", hora: "13:40:30", tipo: "producao", mensagem: "PED-2381 INICIADO → MOLDAGEM por RICARDO" },
+  { id: "7", hora: "13:22:10", tipo: "alerta", mensagem: "ALERT: KY-GRN-02 APPROACHING MINIMUM (14/15 FLS)" },
+  { id: "8", hora: "13:01:44", tipo: "saida", mensagem: "OUTGOING: FIN-GLK-19 (-1 UN) · Solicitante: MARCOS" },
+  { id: "9", hora: "12:45:00", tipo: "entrada", mensagem: "INCOMING: HW-EYE-88 (+500 UN) · Fornecedor: HARDWARE TÁTICO" },
+  { id: "10", hora: "12:30:18", tipo: "producao", mensagem: "PED-2388 INICIADO → MOLDAGEM por JORGE" },
+  { id: "11", hora: "11:55:02", tipo: "auth", mensagem: "USER: OPERADOR_RICARDO AUTH_OK · Session: SES-4820" },
+  { id: "12", hora: "11:20:35", tipo: "alerta", mensagem: "ALERT: HW-RVT-04 BELOW MINIMUM (180/200 UN)" },
+];
+
+// === ALERTAS ===
+export const alertas = [
+  { id: 1, tipo: "critico", mensagem: "KY-BLK-02 abaixo do mínimo — Reposição imediata", ref: "KY-BLK-02" },
+  { id: 2, tipo: "alerta", mensagem: "KY-GRN-02 próximo do mínimo", ref: "KY-GRN-02" },
+  { id: 3, tipo: "alerta", mensagem: "HW-RVT-04 próximo do mínimo", ref: "HW-RVT-04" },
+];

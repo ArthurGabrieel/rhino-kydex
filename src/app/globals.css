@@ -1,26 +1,512 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
+/* ============================================================
+   RHINO KYDEX — TACTICAL MONOLITH DESIGN SYSTEM
+   Industrial Brutalism · Rhino Orange · Dark Mode
+   ============================================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* === SURFACE TIERS (Tonal Layering — No Shadows) === */
+  --background:               #131313;
+  --surface:                  #131313;
+  --surface-dim:              #131313;
+  --surface-container-lowest: #0e0e0e;
+  --surface-container-low:    #1c1b1b;
+  --surface-container:        #20201f;
+  --surface-container-high:   #2a2a2a;
+  --surface-container-highest:#353535;
+  --surface-bright:           #393939;
+  --surface-variant:          #353535;
+
+  /* === PRIMARY — RHINO ORANGE === */
+  --primary:                  #ffb877;
+  --primary-container:        #f7921f;
+  --primary-fixed:            #ffdcc0;
+  --primary-fixed-dim:        #ffb877;
+  --on-primary:               #4b2700;
+  --on-primary-container:     #603400;
+  --inverse-primary:          #8d4f00;
+
+  /* === SECONDARY === */
+  --secondary:                #c7c6c6;
+  --secondary-container:      #484949;
+  --secondary-fixed:          #e3e2e2;
+  --secondary-fixed-dim:      #c7c6c6;
+  --on-secondary:             #2f3131;
+  --on-secondary-container:   #b8b8b8;
+
+  /* === TERTIARY (Warning/Alert) === */
+  --tertiary:                 #ffb3ae;
+  --tertiary-container:       #ff8881;
+  --on-tertiary:              #68000b;
+
+  /* === TEXT === */
+  --on-background:            #e5e2e1;
+  --on-surface:               #e5e2e1;
+  --on-surface-variant:       #dbc2af;
+
+  /* === OUTLINES === */
+  --outline:                  #a38d7b;
+  --outline-variant:          #554335;
+
+  /* === ERROR === */
+  --error:                    #ffb4ab;
+  --error-container:          #93000a;
+  --on-error:                 #690005;
+
+  /* === TYPOGRAPHY === */
+  --font-headline:            'Space Grotesk', sans-serif;
+  --font-body:                'Inter', sans-serif;
+
+  /* === SPACING SCALE === */
+  --radius:                   0px; /* TACTICAL MONOLITH — NO ROUNDED CORNERS */
+
+  /* === Z-INDEX === */
+  --z-sidebar:   100;
+  --z-modal:     200;
+  --z-tooltip:   300;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ============================================================
+   BASE RESET & FOUNDATION
+   ============================================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background);
+  color: var(--on-surface);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  min-height: 100vh;
 }
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+
+.display-lg {
+  font-family: var(--font-headline);
+  font-size: 3.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.headline-lg {
+  font-family: var(--font-headline);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.headline-md {
+  font-family: var(--font-headline);
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.title-lg {
+  font-family: var(--font-body);
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.title-md {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.body-md {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--on-surface);
+}
+
+.label-sm {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+}
+
+/* ============================================================
+   COMPONENTS — BUTTONS (Tactical Actuators)
+   ============================================================ */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(180deg, var(--primary) 0%, var(--primary-container) 100%);
+  color: var(--on-primary);
+  font-family: var(--font-headline);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 150ms ease;
+  user-select: none;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 0 16px rgba(247, 146, 31, 0.4);
+  filter: brightness(1.08);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  color: var(--on-surface);
+  font-family: var(--font-headline);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 1px solid rgba(85, 67, 53, 0.4);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 150ms ease;
+  user-select: none;
+}
+
+.btn-secondary:hover {
+  background: var(--surface-container-high);
+  border-color: var(--outline);
+}
+
+/* ============================================================
+   COMPONENTS — CARDS (Tactical Panels)
+   ============================================================ */
+
+.card {
+  background: var(--surface-container-high);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.card-low {
+  background: var(--surface-container-low);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.card-elevated {
+  background: var(--surface-container-highest);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+/* ============================================================
+   COMPONENTS — INPUTS (Blueprint Fields)
+   ============================================================ */
+
+.input-field {
+  width: 100%;
+  background: var(--surface-container-lowest);
+  color: var(--on-surface);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  padding: 0.875rem 1rem;
+  border: none;
+  border-bottom: 2px solid var(--surface-bright);
+  border-radius: 0;
+  outline: none;
+  transition: border-color 150ms ease;
+}
+
+.input-field::placeholder {
+  color: var(--on-surface-variant);
+  opacity: 0.5;
+}
+
+.input-field:focus {
+  border-bottom-color: var(--primary);
+}
+
+.input-label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+  margin-bottom: 0.5rem;
+}
+
+/* ============================================================
+   COMPONENTS — STATUS CHIPS
+   ============================================================ */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.625rem;
+  background: var(--surface-container-highest);
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+  border-radius: var(--radius);
+}
+
+.chip-warning {
+  background: rgba(255, 136, 129, 0.15);
+  color: var(--tertiary);
+  animation: pulse-chip 2s ease-in-out infinite;
+}
+
+.chip-active {
+  background: rgba(255, 184, 119, 0.15);
+  color: var(--primary);
+}
+
+.chip-success {
+  background: rgba(100, 200, 100, 0.1);
+  color: #7ec88e;
+}
+
+@keyframes pulse-chip {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* ============================================================
+   LAYOUT — SIDEBAR
+   ============================================================ */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 240px;
+  background: var(--surface-container-lowest);
+  border-right: 1px solid rgba(85, 67, 53, 0.2);
+  display: flex;
+  flex-direction: column;
+  z-index: var(--z-sidebar);
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  color: var(--on-surface-variant);
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transition: all 150ms ease;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+}
+
+.sidebar-nav-item:hover {
+  background: var(--surface-container);
+  color: var(--on-surface);
+}
+
+.sidebar-nav-item.active {
+  background: rgba(247, 146, 31, 0.08);
+  color: var(--primary);
+  border-left-color: var(--primary-container);
+}
+
+/* ============================================================
+   LAYOUT — MAIN CONTENT
+   ============================================================ */
+
+.main-content {
+  margin-left: 240px;
+  min-height: 100vh;
+  background: var(--background);
+}
+
+.page-header {
+  padding: 2rem 2rem 1rem;
+  border-bottom: 1px solid rgba(85, 67, 53, 0.15);
+}
+
+.page-body {
+  padding: 2rem;
+}
+
+/* ============================================================
+   TACTICAL GRID LINES (Blueprint effect)
+   ============================================================ */
+
+.tactical-grid {
+  background-image:
+    linear-gradient(rgba(255, 184, 119, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 184, 119, 0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in { animation: fadeIn 0.3s ease forwards; }
+.animate-slide-left { animation: slideInLeft 0.25s ease forwards; }
+
+/* ============================================================
+   KANBAN
+   ============================================================ */
+
+.kanban-col {
+  background: var(--surface-container-lowest);
+  width: 220px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.kanban-col-header {
+  padding: 0.875rem 1rem;
+  background: var(--surface-container);
+  font-family: var(--font-headline);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kanban-card {
+  margin: 0.5rem;
+  padding: 0.875rem;
+  background: var(--surface-container-high);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.kanban-card:hover {
+  background: var(--surface-container-highest);
+  box-shadow: 0 0 0 1px rgba(247, 146, 31, 0.2);
+}
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  background: var(--surface-container);
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+}
+
+.table td {
+  padding: 0.875rem 1rem;
+  font-size: 0.875rem;
+  color: var(--on-surface);
+  border-bottom: 1px solid rgba(85, 67, 53, 0.12);
+}
+
+.table tr:hover td {
+  background: var(--surface-container-low);
+}
+
+/* ============================================================
+   ACTIVITY LOG
+   ============================================================ */
+
+.log-entry {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.625rem 0;
+  border-bottom: 1px solid rgba(85, 67, 53, 0.1);
+  font-size: 0.75rem;
+  font-family: 'Courier New', monospace;
+}
+
+.log-time {
+  color: var(--primary);
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.log-message {
+  color: var(--on-surface-variant);
+}
+
+.log-message.alert {
+  color: var(--tertiary);
+}
+
+.log-message.success {
+  color: #7ec88e;
+}
+
+/* ============================================================
+   SCROLLBAR (Tactical style)
+   ============================================================ */
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--surface-container-lowest); }
+::-webkit-scrollbar-thumb { background: var(--surface-container-high); }
+::-webkit-scrollbar-thumb:hover { background: var(--outline-variant); }
