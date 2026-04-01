@@ -2,23 +2,23 @@
 
 import { useState } from "react";
 import {
-  Building2, Users, Bell, Activity,
+  Building2, Users, Bell, Activity, User
 } from "lucide-react";
 import type { ConfigTab } from "./types";
+import { PerfilTab } from "./PerfilTab";
 import { OperadoresTab } from "./OperadoresTab";
 import { AlertasTab } from "./AlertasTab";
 import { SistemaTab } from "./SistemaTab";
-import { EmpresaTab } from "./EmpresaTab";
 
 const TABS: { key: ConfigTab; label: string; icon: React.ElementType }[] = [
-  { key: "empresa",    label: "Empresa",    icon: Building2 },
+  { key: "perfil",     label: "Meu Perfil", icon: User      },
   { key: "operadores", label: "Operadores", icon: Users     },
   { key: "alertas",    label: "Alertas",    icon: Bell      },
   { key: "sistema",    label: "Sistema",    icon: Activity  },
 ];
 
 export function ConfigBoard() {
-  const [tab, setTab] = useState<ConfigTab>("empresa");
+  const [tab, setTab] = useState<ConfigTab>("perfil");
 
   return (
     <div>
@@ -72,7 +72,7 @@ export function ConfigBoard() {
 
         {/* Tab content */}
         <div>
-          {tab === "empresa"    && <EmpresaTab />}
+          {tab === "perfil"     && <PerfilTab />}
           {tab === "operadores" && <OperadoresTab />}
           {tab === "alertas"    && <AlertasTab />}
           {tab === "sistema"    && <SistemaTab />}

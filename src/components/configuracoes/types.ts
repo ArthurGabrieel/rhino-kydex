@@ -1,19 +1,6 @@
-// Configurações — Tipos de domínio
-export interface Empresa {
-  nome: string;
-  cnpj: string;
-  responsavel: string;
-  telefone: string;
-  email: string;
-  endereco: string;
-  cidade: string;
-  estado: string;
-  cep: string;
-  site: string;
-}
-
 export interface OperadorConfig {
   id: number;
+  email: string;
   nome: string;
   sobrenome: string;
   nivel: "Júnior" | "Pleno" | "Sênior";
@@ -21,6 +8,8 @@ export interface OperadorConfig {
   ativo: boolean;
   funcao: string;
   turno: string;
+  role: "Administrador" | "Gerente" | "Colaborador";
+  modulos: string[];
 }
 
 export interface AlertaConfig {
@@ -32,4 +21,4 @@ export interface AlertaConfig {
   sobreAviso: number; // % acima do mínimo que já avisa
 }
 
-export type ConfigTab = "empresa" | "operadores" | "alertas" | "sistema";
+export type ConfigTab = "perfil" | "operadores" | "alertas" | "sistema";

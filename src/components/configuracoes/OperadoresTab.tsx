@@ -1,13 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Power, Edit2, Check, X } from "lucide-react";
+import { Plus, Power, KeyRound, Settings2 } from "lucide-react";
 import type { OperadorConfig } from "./types";
+import { Button } from "../ui/Button";
+import { useToast } from "../ui/Toast";
+import { OperadorModal } from "./OperadorModal";
 
 const INITIAL_OPERADORES: OperadorConfig[] = [
-  { id: 1, nome: "Jorge",   sobrenome: "Matos",     nivel: "Sênior", avatar: "JM", ativo: true,  funcao: "Moldagem e Acabamento", turno: "Manhã" },
-  { id: 2, nome: "Ricardo", sobrenome: "Ferreira",  nivel: "Pleno",  avatar: "RF", ativo: true,  funcao: "Moldagem",              turno: "Manhã" },
-  { id: 3, nome: "Marcos",  sobrenome: "Oliveira",  nivel: "Júnior", avatar: "MO", ativo: true,  funcao: "Acabamento e Expedição", turno: "Tarde" },
+  { id: 1, email: "jorge.matos@rhino.com",  nome: "Jorge",   sobrenome: "Matos",     nivel: "Sênior", avatar: "JM", ativo: true,  funcao: "Moldagem",     turno: "Manhã", role: "Gerente",       modulos: ["Dashboard", "Estoque", "Produção", "Kanban"] },
+  { id: 2, email: "ricardo.f@rhino.com",    nome: "Ricardo", sobrenome: "Ferreira",  nivel: "Pleno",  avatar: "RF", ativo: true,  funcao: "Moldagem",     turno: "Manhã", role: "Colaborador",   modulos: ["Produção", "Kanban"] },
+  { id: 3, email: "marcos.o@rhino.com",     nome: "Marcos",  sobrenome: "Oliveira",  nivel: "Júnior", avatar: "MO", ativo: false, funcao: "Acabamento",   turno: "Tarde", role: "Colaborador",   modulos: ["Kanban"] },
 ];
 
 const NIVEL_COLOR: Record<string, string> = {
@@ -16,17 +19,31 @@ const NIVEL_COLOR: Record<string, string> = {
   "Júnior": "var(--on-surface-variant)",
 };
 
+const ROLE_COLOR: Record<string, string> = {
+  "Administrador": "var(--tertiary)",
+  "Gerente": "var(--primary)",
+  "Colaborador": "var(--on-surface-variant)",
+};
+
 function OperadorRow({
   op,
   onToggle,
+  onEdit,
 }: {
   op: OperadorConfig;
   onToggle: (id: number) => void;
+  onEdit: (op: OperadorConfig) => void;
 }) {
+  const { showToast } = useToast();
+
+  const handleResetPassword = () => {
+    showToast(`Um link seguro foi gerado para o operador ${op.nome}.`, "success");
+  };
+
   return (
     <div style={{
       display: "grid",
-      gridTemplateColumns: "40px 1fr 1fr 1fr auto",
+      gridTemplateColumns: "40px 1.5fr 1fr 1fr 1fr auto",
       alignItems: "center",
       gap: "1rem",
       padding: "0.875rem 1rem",
@@ -45,13 +62,16 @@ function OperadorRow({
         {op.avatar}
       </div>
 
-      {/* Nome + nível */}
+      {/* Nome + e-mail + nível */}
       <div>
-        <div style={{ fontSize: "0.875rem", fontWeight: 600 }}>
+        <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--on-surface)", display: "flex", gap: "0.5rem", alignItems: "center" }}>
           {op.nome} {op.sobrenome}
+          <div style={{ fontSize: "0.625rem", color: NIVEL_COLOR[op.nivel], fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase" }}>
+            {op.nivel}
+          </div>
         </div>
-        <div style={{ fontSize: "0.625rem", color: NIVEL_COLOR[op.nivel], fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase" }}>
-          {op.nivel}
+        <div style={{ fontSize: "0.75rem", color: "var(--on-surface-variant)", marginTop: "0.125rem" }}>
+          {op.email}
         </div>
       </div>
 
@@ -60,59 +80,132 @@ function OperadorRow({
         {op.funcao}
       </div>
 
+      {/* Role */}
+      <div style={{ display: "flex", alignItems: "center", gap: "0.375rem" }}>
+        <div style={{ width: 6, height: 6, borderRadius: "50%", background: ROLE_COLOR[op.role] }} />
+        <span className="label-sm" style={{ textTransform: "none", fontSize: "0.75rem", color: "var(--on-surface)" }}>
+          {op.role}
+        </span>
+      </div>
+
       {/* Turno */}
       <span className="chip" style={{ justifySelf: "start" }}>{op.turno}</span>
 
-      {/* Toggle ativo */}
-      <button
-        onClick={() => onToggle(op.id)}
-        title={op.ativo ? "Desativar operador" : "Ativar operador"}
-        style={{
-          display: "flex", alignItems: "center", gap: "0.375rem",
-          padding: "0.375rem 0.75rem",
-          background: op.ativo ? "rgba(126,200,142,0.1)" : "rgba(255,136,129,0.1)",
-          border: "none", cursor: "pointer",
-          fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.04em",
-          textTransform: "uppercase", fontFamily: "var(--font-headline)",
-          color: op.ativo ? "#7ec88e" : "var(--tertiary)",
-          transition: "all 150ms ease",
-        }}
-      >
-        <Power size={11} />
-        {op.ativo ? "Ativo" : "Inativo"}
-      </button>
+      {/* Actions */}
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", justifySelf: "end" }}>
+        <button
+          onClick={() => onEdit(op)}
+          title="Editar configurações e acessos"
+          style={{
+            display: "flex", alignItems: "center", justifyContent: "center",
+            width: 32, height: 32,
+            background: "transparent",
+            border: "1px solid rgba(85, 67, 53, 0.4)",
+            color: "var(--on-surface-variant)",
+            cursor: "pointer",
+            transition: "all 150ms ease",
+            borderRadius: "0px"
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "var(--surface-container-high)";
+            e.currentTarget.style.color = "var(--on-surface)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "transparent";
+            e.currentTarget.style.color = "var(--on-surface-variant)";
+          }}
+        >
+          <Settings2 size={14} />
+        </button>
+        <button
+          onClick={handleResetPassword}
+          title="Resetar senha de acesso"
+          style={{
+            display: "flex", alignItems: "center", justifyContent: "center",
+            width: 32, height: 32,
+            background: "transparent",
+            border: "1px solid rgba(85, 67, 53, 0.4)",
+            color: "var(--on-surface-variant)",
+            cursor: "pointer",
+            transition: "all 150ms ease",
+            borderRadius: "0px"
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "var(--surface-container-high)";
+            e.currentTarget.style.color = "var(--on-surface)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "transparent";
+            e.currentTarget.style.color = "var(--on-surface-variant)";
+          }}
+        >
+          <KeyRound size={13} />
+        </button>
+        <button
+          onClick={() => onToggle(op.id)}
+          title={op.ativo ? "Desativar operador" : "Ativar operador"}
+          style={{
+            display: "flex", alignItems: "center", gap: "0.375rem",
+            padding: "0.375rem 0.75rem", height: 32,
+            background: op.ativo ? "rgba(126,200,142,0.1)" : "rgba(255,136,129,0.1)",
+            border: "none", cursor: "pointer",
+            fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.04em",
+            textTransform: "uppercase", fontFamily: "var(--font-headline)",
+            color: op.ativo ? "#7ec88e" : "var(--tertiary)",
+            transition: "all 150ms ease",
+            borderRadius: "0px"
+          }}
+        >
+          <Power size={11} />
+          {op.ativo ? "Ativo" : "Inativo"}
+        </button>
+      </div>
     </div>
   );
 }
 
 export function OperadoresTab() {
   const [operadores, setOperadores] = useState<OperadorConfig[]>(INITIAL_OPERADORES);
-  const [showAdd, setShowAdd] = useState(false);
-  const [newNome, setNewNome] = useState("");
-  const [newSobre, setNewSobre] = useState("");
-  const [newFuncao, setNewFuncao] = useState("Moldagem");
-  const [newTurno, setNewTurno] = useState("Manhã");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingOperador, setEditingOperador] = useState<OperadorConfig | undefined>(undefined);
 
   const toggleAtivo = (id: number) =>
     setOperadores((prev) => prev.map((o) => o.id === id ? { ...o, ativo: !o.ativo } : o));
 
-  const addOperador = () => {
-    if (!newNome.trim()) return;
-    const initials = `${newNome[0] ?? "?"}${newSobre[0] ?? "?"}`.toUpperCase();
-    setOperadores((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        nome: newNome.trim(),
-        sobrenome: newSobre.trim(),
-        nivel: "Júnior",
-        avatar: initials,
-        ativo: true,
-        funcao: newFuncao,
-        turno: newTurno,
-      },
-    ]);
-    setNewNome(""); setNewSobre(""); setShowAdd(false);
+  const handleSaveOperador = (opData: Partial<OperadorConfig>) => {
+    if (editingOperador) {
+      // Editar existente
+      setOperadores(prev => prev.map(o => o.id === editingOperador.id ? { ...o, ...opData } as OperadorConfig : o));
+    } else {
+      // Criar novo
+      const initials = `${opData.nome?.[0] || "?"}${opData.sobrenome?.[0] || "?"}`.toUpperCase();
+      setOperadores(prev => [
+        ...prev,
+        {
+          id: Date.now(),
+          email: opData.email || "",
+          nome: opData.nome || "",
+          sobrenome: opData.sobrenome || "",
+          nivel: opData.nivel || "Júnior",
+          avatar: initials,
+          ativo: typeof opData.ativo === "boolean" ? opData.ativo : true,
+          funcao: opData.funcao || "Moldagem",
+          turno: opData.turno || "Manhã",
+          role: opData.role || "Colaborador",
+          modulos: opData.modulos || ["Dashboard"]
+        }
+      ]);
+    }
+  };
+
+  const openAddModal = () => {
+    setEditingOperador(undefined);
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (op: OperadorConfig) => {
+    setEditingOperador(op);
+    setIsModalOpen(true);
   };
 
   const ativos   = operadores.filter((o) => o.ativo).length;
@@ -139,70 +232,33 @@ export function OperadoresTab() {
         {/* Header */}
         <div style={{
           display: "grid",
-          gridTemplateColumns: "40px 1fr 1fr 1fr auto",
+          gridTemplateColumns: "40px 1.5fr 1fr 1fr 1fr auto",
           gap: "1rem",
           padding: "0.625rem 1rem",
           background: "var(--surface-container)",
         }}>
-          {["", "OPERADOR", "FUNÇÃO", "TURNO", "STATUS"].map((h) => (
+          {["", "OPERADOR", "FUNÇÃO", "PERFIL (ROLE)", "TURNO", "STATUS"].map((h) => (
             <span key={h} className="label-sm" style={{ fontSize: "0.5625rem" }}>{h}</span>
           ))}
         </div>
 
         {operadores.map((op) => (
-          <OperadorRow key={op.id} op={op} onToggle={toggleAtivo} />
+          <OperadorRow key={op.id} op={op} onToggle={toggleAtivo} onEdit={openEditModal} />
         ))}
-
-        {/* Add form inline */}
-        {showAdd && (
-          <div style={{
-            padding: "1rem",
-            background: "var(--surface-container-lowest)",
-            borderTop: "1px solid rgba(85,67,53,0.1)",
-            display: "flex", gap: "0.75rem", alignItems: "flex-end", flexWrap: "wrap",
-          }}>
-            <div style={{ flex: "1 1 140px" }}>
-              <label className="input-label">Nome</label>
-              <input className="input-field" value={newNome} onChange={(e) => setNewNome(e.target.value)} placeholder="João" />
-            </div>
-            <div style={{ flex: "1 1 140px" }}>
-              <label className="input-label">Sobrenome</label>
-              <input className="input-field" value={newSobre} onChange={(e) => setNewSobre(e.target.value)} placeholder="Silva" />
-            </div>
-            <div style={{ flex: "1 1 160px" }}>
-              <label className="input-label">Função</label>
-              <select className="input-field" value={newFuncao} onChange={(e) => setNewFuncao(e.target.value)} style={{ cursor: "pointer" }}>
-                {["Moldagem", "Acabamento", "Expedição", "Moldagem e Acabamento", "Acabamento e Expedição"].map((f) => (
-                  <option key={f} value={f}>{f}</option>
-                ))}
-              </select>
-            </div>
-            <div style={{ flex: "1 1 120px" }}>
-              <label className="input-label">Turno</label>
-              <select className="input-field" value={newTurno} onChange={(e) => setNewTurno(e.target.value)} style={{ cursor: "pointer" }}>
-                {["Manhã", "Tarde", "Noite"].map((t) => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </select>
-            </div>
-            <div style={{ display: "flex", gap: "0.5rem" }}>
-              <button className="btn-primary" onClick={addOperador} style={{ padding: "0.75rem 1rem" }}>
-                <Check size={14} />
-              </button>
-              <button className="btn-secondary" onClick={() => setShowAdd(false)} style={{ padding: "0.75rem 1rem" }}>
-                <X size={14} />
-              </button>
-            </div>
-          </div>
-        )}
       </div>
 
-      {!showAdd && (
-        <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <button className="btn-secondary" onClick={() => setShowAdd(true)} style={{ gap: "0.5rem" }}>
-            <Plus size={14} /> Adicionar Operador
-          </button>
-        </div>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "0.5rem" }}>
+        <Button variant="secondary" onClick={openAddModal}>
+          <Plus size={16} /> NOVO OPERADOR
+        </Button>
+      </div>
+
+      {isModalOpen && (
+        <OperadorModal
+          operador={editingOperador}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleSaveOperador}
+        />
       )}
     </div>
   );
