@@ -18,7 +18,7 @@ const STATUS_CONFIG = {
   critico: { label: "Crítico", Icon: AlertTriangle, color: "var(--tertiary)"},
 } as const;
 
-export default function EstoqueBoard() {
+export default function EstoqueBoard({ isReadOnly = false }: { isReadOnly?: boolean }) {
   const [state, dispatch] = useReducer(estoqueReducer, {
     itens: initialEstoque,
     log:   initialLog,
@@ -92,10 +92,12 @@ export default function EstoqueBoard() {
             </p>
           </div>
 
-          <Button id="btn-add-item" variant="primary" onClick={() => setAddOpen(true)} style={{ gap: "0.375rem" }}>
-            <Plus size={14} />
-            Adicionar Item
-          </Button>
+          {!isReadOnly && (
+            <Button id="btn-add-item" variant="primary" onClick={() => setAddOpen(true)} style={{ gap: "0.375rem" }}>
+              <Plus size={14} />
+              Adicionar Item
+            </Button>
+          )}
         </div>
       </div>
 
@@ -234,6 +236,7 @@ export default function EstoqueBoard() {
         item={selectedItem}
         onClose={() => setSelectedId(null)}
         dispatch={dispatch}
+        isReadOnly={isReadOnly}
       />
     </div>
   );

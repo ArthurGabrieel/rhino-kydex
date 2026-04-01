@@ -20,6 +20,7 @@ interface ItemDetailModalProps {
   item: ItemEstoque | null;
   onClose: () => void;
   dispatch: React.Dispatch<EstoqueAction>;
+  isReadOnly?: boolean;
 }
 
 const STATUS_CONFIG = {
@@ -30,7 +31,7 @@ const STATUS_CONFIG = {
 
 type Tab = "info" | "ajuste";
 
-export default function ItemDetailModal({ item, onClose, dispatch }: ItemDetailModalProps) {
+export default function ItemDetailModal({ item, onClose, dispatch, isReadOnly }: ItemDetailModalProps) {
   const [tab, setTab] = useState<Tab>("info");
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<Partial<ItemEstoque>>({});
@@ -105,11 +106,11 @@ export default function ItemDetailModal({ item, onClose, dispatch }: ItemDetailM
       <div style={{ display: "flex", borderBottom: "1px solid rgba(85,67,53,0.15)", marginBottom: "1.25rem" }}>
         {([
           { id: "info", label: "Dados" },
-          { id: "ajuste", label: "Ajustar Quantidade" },
-        ] as { id: Tab; label: string }[]).map(({ id, label }) => (
+          ...(isReadOnly ? [] : [{ id: "ajuste", label: "Ajustar Quantidade" } as { id: Tab; label: string }]),
+        ]).map(({ id, label }) => (
           <button
             key={id}
-            onClick={() => setTab(id)}
+            onClick={() => setTab(id as Tab)}
             style={{
               padding: "0.625rem 1rem",
               background: "none",
@@ -198,33 +199,35 @@ export default function ItemDetailModal({ item, onClose, dispatch }: ItemDetailM
           </Field>
 
           {/* Actions */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1rem", borderTop: "1px solid rgba(85,67,53,0.15)", flexWrap: "wrap", gap: "0.75rem" }}>
-            <div style={{ display: "flex", gap: "0.5rem" }}>
-              {editing ? (
-                <>
-                  <Button variant="secondary" onClick={() => { setEditing(false); setForm({}); }} style={{ padding: "0.5rem 0.875rem", fontSize: "0.6875rem" }}>Cancelar</Button>
-                  <Button variant="primary" onClick={handleSave} style={{ padding: "0.5rem 0.875rem", fontSize: "0.6875rem", gap: "0.25rem" }}><Save size={13} /> Salvar</Button>
-                </>
-              ) : (
-                <Button variant="secondary" onClick={() => setEditing(true)} style={{ padding: "0.5rem 0.875rem", fontSize: "0.6875rem", gap: "0.25rem" }}><Edit2 size={12} /> Editar</Button>
+          {!isReadOnly && (
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1rem", borderTop: "1px solid rgba(85,67,53,0.15)", flexWrap: "wrap", gap: "0.75rem" }}>
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                {editing ? (
+                  <>
+                    <Button variant="secondary" onClick={() => { setEditing(false); setForm({}); }} style={{ padding: "0.5rem 0.875rem", fontSize: "0.6875rem" }}>Cancelar</Button>
+                    <Button variant="primary" onClick={handleSave} style={{ padding: "0.5rem 0.875rem", fontSize: "0.6875rem", gap: "0.25rem" }}><Save size={13} /> Salvar</Button>
+                  </>
+                ) : (
+                  <Button variant="secondary" onClick={() => setEditing(true)} style={{ padding: "0.5rem 0.875rem", fontSize: "0.6875rem", gap: "0.25rem" }}><Edit2 size={12} /> Editar</Button>
+                )}
+              </div>
+
+              {!editing && (
+                confirmDelete ? (
+                  <button
+                    onClick={handleDelete}
+                    style={{ padding: "0.5rem 0.875rem", fontSize: "0.6875rem", background: "var(--tertiary-container)", color: "var(--on-tertiary)", border: "none", cursor: "pointer", fontFamily: "var(--font-headline)", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "0.25rem" }}
+                  >
+                    <Trash2 size={13} /> Confirmar remoção
+                  </button>
+                ) : (
+                  <Button variant="secondary" onClick={() => setConfirmDelete(true)} style={{ padding: "0.5rem 0.875rem", fontSize: "0.6875rem", color: "var(--tertiary)", borderColor: "rgba(255,136,129,0.3)", gap: "0.25rem" }}>
+                    <Trash2 size={13} /> Remover
+                  </Button>
+                )
               )}
             </div>
-
-            {!editing && (
-              confirmDelete ? (
-                <button
-                  onClick={handleDelete}
-                  style={{ padding: "0.5rem 0.875rem", fontSize: "0.6875rem", background: "var(--tertiary-container)", color: "var(--on-tertiary)", border: "none", cursor: "pointer", fontFamily: "var(--font-headline)", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "0.25rem" }}
-                >
-                  <Trash2 size={13} /> Confirmar remoção
-                </button>
-              ) : (
-                <Button variant="secondary" onClick={() => setConfirmDelete(true)} style={{ padding: "0.5rem 0.875rem", fontSize: "0.6875rem", color: "var(--tertiary)", borderColor: "rgba(255,136,129,0.3)", gap: "0.25rem" }}>
-                  <Trash2 size={13} /> Remover
-                </Button>
-              )
-            )}
-          </div>
+          )}
         </div>
       )}
 

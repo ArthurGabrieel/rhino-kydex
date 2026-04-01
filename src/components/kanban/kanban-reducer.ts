@@ -19,14 +19,14 @@ export type KanbanAction =
 // ─── Reducer ─────────────────────────────────────────────────
 export function kanbanReducer(
   state: KanbanState,
-  action: KanbanAction
+  action: KanbanAction,
 ): KanbanState {
   switch (action.type) {
     case "MOVE_CARD": {
       return {
         ...state,
         pedidos: state.pedidos.map((p) =>
-          p.id === action.id ? { ...p, status: action.to } : p
+          p.id === action.id ? { ...p, status: action.to } : p,
         ),
       };
     }
@@ -63,7 +63,7 @@ export function kanbanReducer(
       return {
         ...state,
         pedidos: state.pedidos.map((p) =>
-          p.id === action.pedido.id ? { ...p, ...action.pedido } : p
+          p.id === action.pedido.id ? { ...p, ...action.pedido } : p,
         ),
       };
     }
@@ -79,7 +79,7 @@ export function kanbanReducer(
       return {
         ...state,
         pedidos: state.pedidos.map((p) =>
-          p.id === action.id ? { ...p, operador: action.operador } : p
+          p.id === action.id ? { ...p, operador: action.operador } : p,
         ),
       };
     }
@@ -89,8 +89,11 @@ export function kanbanReducer(
         ...state,
         pedidos: state.pedidos.map((p) =>
           p.id === action.id
-            ? { ...p, comentarios: [...(p.comentarios ?? []), action.comentario] }
-            : p
+            ? {
+                ...p,
+                comentarios: [...(p.comentarios ?? []), action.comentario],
+              }
+            : p,
         ),
       };
     }

@@ -31,8 +31,8 @@ export function OperadorModal({
 
   const MODULOS_POR_ROLE: Record<string, string[]> = {
     Administrador: ["Dashboard", "Estoque", "Produção", "Kanban"],
-    Gerente: ["Dashboard", "Produção", "Kanban", "Relatórios"],
-    Colaborador: ["Produção", "Kanban"],
+    Gerente: ["Dashboard", "EstoqueReadOnly", "Produção", "Kanban", "Relatórios"],
+    Colaborador: ["Produção", "Kanban", "EstoqueReadOnly"],
   };
 
   const modulosDerivados = MODULOS_POR_ROLE[role] || [];
@@ -43,7 +43,8 @@ export function OperadorModal({
 
   const MODULOS_DISPONIVEIS = [
     { id: "Dashboard", label: "Dashboard", icon: BarChart },
-    { id: "Estoque", label: "Estoque", icon: Box },
+    { id: "Estoque", label: "Estoque (Gestão Total)", icon: Box },
+    { id: "EstoqueReadOnly", label: "Estoque (Apenas Leitura)", icon: Box },
     { id: "Produção", label: "Produção", icon: Factory },
     { id: "Kanban", label: "Gestão Kanban", icon: LayoutGrid },
     { id: "Relatórios", label: "Relatórios Gerais", icon: BarChart },

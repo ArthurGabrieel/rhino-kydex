@@ -58,6 +58,7 @@
   /* === TYPOGRAPHY === */
   --font-headline:            'Space Grotesk', sans-serif;
   --font-body:                'Inter', sans-serif;
+  --font-mono:                'Space Mono', 'Courier New', monospace;
 
   /* === SPACING SCALE === */
   --radius:                   0px; /* TACTICAL MONOLITH — NO ROUNDED CORNERS */

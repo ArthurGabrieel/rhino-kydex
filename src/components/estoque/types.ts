@@ -26,7 +26,10 @@ export interface LogEntry {
 
 // ─── Helpers ───────────────────────────────────────────────────
 
-export function calcularStatus(quantidade: number, minimo: number): StatusEstoque {
+export function calcularStatus(
+  quantidade: number,
+  minimo: number,
+): StatusEstoque {
   if (quantidade <= 0) return "critico";
   const pct = quantidade / minimo;
   if (pct <= 0.5) return "critico";
@@ -35,16 +38,26 @@ export function calcularStatus(quantidade: number, minimo: number): StatusEstoqu
 }
 
 export const CATEGORIA_LABEL: Record<CategoriaEstoque, string> = {
-  material:      "Material",
-  hardware:      "Hardware",
+  material: "Material",
+  hardware: "Hardware",
   produto_final: "Produto Final",
 };
 
 export const UNIDADES_COMUNS = ["UN", "FLS", "MT", "KG", "L", "CX", "PCT"];
 
 export const LOCALIZACOES_COMUNS = [
-  "A-01", "A-02", "A-03", "A-04",
-  "B-01", "B-02", "B-03", "B-04",
-  "C-01", "C-02", "C-03",
-  "D-01", "D-02", "D-03",
+  "A-01",
+  "A-02",
+  "A-03",
+  "A-04",
+  "B-01",
+  "B-02",
+  "B-03",
+  "B-04",
+  "C-01",
+  "C-02",
+  "C-03",
+  "D-01",
+  "D-02",
+  "D-03",
 ];
