@@ -1,8 +1,9 @@
 // RHINO KYDEX — Mock Data Layer
 // All production data is mocked for frontend demonstration
 import type { Pedido, KanbanStatus } from "@/components/kanban/types";
+import type { ItemEstoque, LogEntry } from "@/components/estoque/types";
 
-export type { Pedido, KanbanStatus };
+export type { Pedido, KanbanStatus, ItemEstoque, LogEntry };
 
 // === OPERADORES ===
 export const operadores = [
@@ -64,18 +65,7 @@ export const pedidos: Pedido[] = [
 ];
 
 // === ESTOQUE (Inventory) ===
-export interface ItemEstoque {
-  id: string;
-  ref: string;
-  nome: string;
-  categoria: "material" | "hardware" | "produto_final";
-  quantidade: number;
-  unidade: string;
-  minimo: number;
-  localizacao: string;
-  status: "ok" | "alerta" | "critico";
-}
-
+// Types imported from components/estoque/types.ts — no duplication
 export const estoque: ItemEstoque[] = [
   { id: "1", ref: "KY-BLK-02", nome: "Kydex Sheet - Tactical Black 2mm", categoria: "material", quantidade: 8, unidade: "FLS", minimo: 20, localizacao: "A-01", status: "critico" },
   { id: "2", ref: "KY-FDE-02", nome: "Kydex Sheet - Flat Dark Earth 2mm", categoria: "material", quantidade: 45, unidade: "FLS", minimo: 20, localizacao: "A-02", status: "ok" },
@@ -92,12 +82,7 @@ export const estoque: ItemEstoque[] = [
 ];
 
 // === LOG DE ATIVIDADES ===
-export interface LogEntry {
-  id: string;
-  hora: string;
-  tipo: "saida" | "alerta" | "entrada" | "auth" | "producao";
-  mensagem: string;
-}
+// LogEntry type imported from components/estoque/types.ts
 
 export const logAtividades: LogEntry[] = [
   { id: "1", hora: "14:32:18", tipo: "producao", mensagem: "PED-2380 CONCLUIDO → EXPEDICAO por JORGE" },
