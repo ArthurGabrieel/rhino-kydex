@@ -11,6 +11,7 @@ interface Props {
   onSenha: (v: string) => void;
   onTogglePass: () => void;
   onSubmit: (e: React.FormEvent) => void;
+  onRecover: () => void;
 }
 
 /**
@@ -18,7 +19,7 @@ interface Props {
  */
 export function LoginForm({
   usuario, senha, showPass, loading,
-  onUsuario, onSenha, onTogglePass, onSubmit,
+  onUsuario, onSenha, onTogglePass, onSubmit, onRecover,
 }: Props) {
   return (
     <form onSubmit={onSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
@@ -90,6 +91,7 @@ export function LoginForm({
         <button
           type="button"
           className="label-sm"
+          onClick={onRecover}
           style={{
             background: "none", border: "none",
             cursor: "pointer", color: "var(--primary)", opacity: 0.7,
