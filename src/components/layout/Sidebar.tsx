@@ -4,9 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
-  Radio,
-  Package,
   Kanban,
+  Package,
   Settings,
   LogOut,
   Crosshair,
@@ -15,9 +14,8 @@ import { operadorAtivo } from "@/lib/mock-data";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/dashboard/producao", label: "Produção", icon: Radio },
+  { href: "/dashboard/producao", label: "Produção", icon: Kanban },
   { href: "/dashboard/estoque", label: "Estoque", icon: Package },
-  { href: "/dashboard/kanban", label: "Kanban", icon: Kanban },
   { href: "/dashboard/configuracoes", label: "Configurações", icon: Settings },
 ];
 

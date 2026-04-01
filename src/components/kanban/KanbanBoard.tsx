@@ -4,7 +4,7 @@ import { useReducer, useState, useMemo } from "react";
 import { Plus, Filter, X } from "lucide-react";
 import { pedidos as initialPedidos } from "@/lib/mock-data";
 import { kanbanReducer } from "./kanban-reducer";
-import { Pedido, COLUNAS, KanbanStatus, Prioridade } from "./types";
+import { COLUNAS, KanbanStatus, Prioridade } from "./types";
 import KanbanColumn from "./KanbanColumn";
 import CardDetailModal from "./CardDetailModal";
 import NewOrderModal from "./NewOrderModal";
@@ -20,9 +20,15 @@ export default function KanbanBoard() {
   // Drag state
   const [draggingId, setDraggingId] = useState<string | null>(null);
 
-  // Modal state
-  const [selectedPedido, setSelectedPedido] = useState<Pedido | null>(null);
+  // Modal state — store only ID, derive live pedido from state
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [newOrderOpen, setNewOrderOpen] = useState(false);
+
+  // Live selected pedido (always fresh from state — comments update instantly)
+  const selectedPedido = useMemo(
+    () => state.pedidos.find((p) => p.id === selectedId) ?? null,
+    [state.pedidos, selectedId]
+  );
 
   // Filter state
   const [filterPrioridade, setFilterPrioridade] = useState<FilterPrioridade>("todas");
@@ -55,17 +61,6 @@ export default function KanbanBoard() {
   const clearFilters = () => {
     setFilterPrioridade("todas");
     setFilterOperador("todos");
-  };
-
-  // When detail modal updates, sync selected pedido
-  const handleDetailUpdate = (pedido: Pedido | null) => {
-    if (!pedido) {
-      setSelectedPedido(null);
-      return;
-    }
-    // Find fresh version from state after dispatch
-    const fresh = state.pedidos.find((p) => p.id === pedido.id) ?? null;
-    setSelectedPedido(fresh);
   };
 
   return (
@@ -284,7 +279,7 @@ export default function KanbanBoard() {
                 coluna={coluna}
                 pedidos={colPedidos}
                 dispatch={dispatch}
-                onOpenDetail={(p) => setSelectedPedido(p)}
+                onOpenDetail={(p) => setSelectedId(p.id)}
                 draggingId={draggingId}
                 onDragStart={(id) => setDraggingId(id)}
                 onDragEnd={() => setDraggingId(null)}
@@ -363,7 +358,7 @@ export default function KanbanBoard() {
       {/* Modals */}
       <CardDetailModal
         pedido={selectedPedido}
-        onClose={() => setSelectedPedido(null)}
+        onClose={() => setSelectedId(null)}
         dispatch={dispatch}
       />
 

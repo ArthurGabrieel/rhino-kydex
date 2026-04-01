@@ -9,6 +9,14 @@ export type KanbanStatus =
 
 export type Prioridade = "alta" | "media" | "normal";
 
+export interface Comentario {
+  id: string;
+  autor: string;
+  avatar: string;
+  texto: string;
+  hora: string;
+}
+
 export interface Pedido {
   id: string;
   ref: string;
@@ -21,6 +29,7 @@ export interface Pedido {
   hora: string;
   operador?: string;
   observacoes?: string;
+  comentarios?: Comentario[];
 }
 
 export interface Coluna {

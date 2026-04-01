@@ -38,6 +38,7 @@ export default function KanbanColumn({
     setIsDragOver(false);
     if (draggingId) {
       dispatch({ type: "MOVE_CARD", id: draggingId, to: coluna.id as KanbanStatus });
+      onDragEnd(); // always clear dragging state after drop
     }
   };
 

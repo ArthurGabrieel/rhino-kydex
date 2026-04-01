@@ -1,4 +1,4 @@
-import { Pedido, KanbanStatus, COLUNA_ORDER } from "./types";
+import { Pedido, KanbanStatus, COLUNA_ORDER, Comentario } from "./types";
 
 // ─── State ────────────────────────────────────────────────────
 export interface KanbanState {
@@ -13,7 +13,8 @@ export type KanbanAction =
   | { type: "ADD_ORDER"; pedido: Pedido }
   | { type: "UPDATE_ORDER"; pedido: Partial<Pedido> & { id: string } }
   | { type: "DELETE_ORDER"; id: string }
-  | { type: "ASSIGN_OPERATOR"; id: string; operador: string };
+  | { type: "ASSIGN_OPERATOR"; id: string; operador: string }
+  | { type: "ADD_COMMENT"; id: string; comentario: Comentario };
 
 // ─── Reducer ─────────────────────────────────────────────────
 export function kanbanReducer(
@@ -79,6 +80,17 @@ export function kanbanReducer(
         ...state,
         pedidos: state.pedidos.map((p) =>
           p.id === action.id ? { ...p, operador: action.operador } : p
+        ),
+      };
+    }
+
+    case "ADD_COMMENT": {
+      return {
+        ...state,
+        pedidos: state.pedidos.map((p) =>
+          p.id === action.id
+            ? { ...p, comentarios: [...(p.comentarios ?? []), action.comentario] }
+            : p
         ),
       };
     }
