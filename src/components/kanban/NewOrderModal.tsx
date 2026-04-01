@@ -5,11 +5,13 @@ import Modal from "@/components/ui/Modal";
 import { Pedido, KanbanStatus, Prioridade, COLUNAS } from "./types";
 import { KanbanAction } from "./kanban-reducer";
 import { operadores } from "@/lib/mock-data";
+import { Button } from "@/components/ui/Button";
 
 interface NewOrderModalProps {
   open: boolean;
   onClose: () => void;
   dispatch: React.Dispatch<KanbanAction>;
+  onSuccess?: (msg: string) => void;
 }
 
 const ARMAS_COMUNS = [
@@ -59,6 +61,7 @@ export default function NewOrderModal({
   open,
   onClose,
   dispatch,
+  onSuccess,
 }: NewOrderModalProps) {
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -98,9 +101,8 @@ export default function NewOrderModal({
     };
 
     dispatch({ type: "ADD_ORDER", pedido: novoPedido });
-    setForm(EMPTY_FORM);
-    setErrors({});
-    onClose();
+    onSuccess?.(novoPedido.ref);
+    handleClose();
   };
 
   const handleClose = () => {
@@ -223,21 +225,21 @@ export default function NewOrderModal({
             borderTop: "1px solid rgba(85,67,53,0.15)",
           }}
         >
-          <button
+          <Button
             type="button"
-            className="btn-secondary"
+            variant="secondary"
             onClick={handleClose}
             style={{ padding: "0.625rem 1.25rem" }}
           >
             Cancelar
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
-            className="btn-primary"
+            variant="primary"
             style={{ padding: "0.625rem 1.5rem" }}
           >
             Criar Pedido
-          </button>
+          </Button>
         </div>
       </form>
     </Modal>

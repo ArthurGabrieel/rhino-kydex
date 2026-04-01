@@ -4,12 +4,13 @@ import { useReducer, useState, useMemo } from "react";
 import { Search, AlertTriangle, CheckCircle, TrendingDown, Package, Plus, X } from "lucide-react";
 import { estoque as initialEstoque, logAtividades as initialLog } from "@/lib/mock-data";
 import { estoqueReducer } from "./estoque-reducer";
-import { FiltroStatus, FiltroCategoria, CATEGORIA_LABEL } from "./types";
+import { FiltroStatus, FiltroCategoria, CATEGORIA_LABEL, ItemEstoque } from "./types";
 import EstoqueRow from "./EstoqueRow";
 import ActivityLog from "./ActivityLog";
 import AddItemModal from "./AddItemModal";
 import ItemDetailModal from "./ItemDetailModal";
-import { ItemEstoque } from "./types";
+import { useToast } from "@/components/ui/Toast";
+import { Button } from "@/components/ui/Button";
 
 const STATUS_CONFIG = {
   ok:      { label: "OK",      Icon: CheckCircle,  color: "#7ec88e"         },
@@ -26,6 +27,9 @@ export default function EstoqueBoard() {
   // Modals
   const [addOpen, setAddOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  // Toast
+  const { showToast } = useToast();
 
   // Live selected item (always fresh)
   const selectedItem = useMemo(
@@ -88,10 +92,10 @@ export default function EstoqueBoard() {
             </p>
           </div>
 
-          <button id="btn-add-item" className="btn-primary" onClick={() => setAddOpen(true)} style={{ gap: "0.375rem" }}>
+          <Button id="btn-add-item" variant="primary" onClick={() => setAddOpen(true)} style={{ gap: "0.375rem" }}>
             <Plus size={14} />
             Adicionar Item
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -153,23 +157,22 @@ export default function EstoqueBoard() {
               </div>
 
               <div style={{ display: "flex", gap: "0.375rem" }}>
-                <button
-                  key="todas"
+                <Button
+                  variant={filtroCategoria === "todas" ? "primary" : "secondary"}
                   onClick={() => setFiltroCategoria("todas")}
-                  className={filtroCategoria === "todas" ? "btn-primary" : "btn-secondary"}
-                  style={{ padding: "0.5rem 0.75rem", fontSize: "0.6875rem" }}
+                  style={{ padding: "0.5rem 1rem", fontSize: "0.75rem", borderRadius: 0 }}
                 >
                   Todas
-                </button>
+                </Button>
                 {(Object.entries(CATEGORIA_LABEL) as [keyof typeof CATEGORIA_LABEL, string][]).map(([key, label]) => (
-                  <button
+                  <Button
                     key={key}
+                    variant={filtroCategoria === key ? "primary" : "secondary"}
                     onClick={() => setFiltroCategoria(filtroCategoria === key ? "todas" : key)}
-                    className={filtroCategoria === key ? "btn-primary" : "btn-secondary"}
-                    style={{ padding: "0.5rem 0.75rem", fontSize: "0.6875rem" }}
+                    style={{ padding: "0.5rem 1rem", fontSize: "0.75rem", borderRadius: 0 }}
                   >
                     {label}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -224,6 +227,7 @@ export default function EstoqueBoard() {
         open={addOpen}
         onClose={() => setAddOpen(false)}
         dispatch={dispatch}
+        onSuccess={(nome: string) => showToast(`Item "${nome}" cadastrado com sucesso.`, "success")}
       />
 
       <ItemDetailModal

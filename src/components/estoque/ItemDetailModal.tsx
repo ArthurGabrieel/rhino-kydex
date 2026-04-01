@@ -6,6 +6,7 @@ import {
   AlertTriangle, CheckCircle, TrendingDown,
 } from "lucide-react";
 import Modal from "@/components/ui/Modal";
+import { Button } from "@/components/ui/Button";
 import {
   ItemEstoque,
   CategoriaEstoque,
@@ -201,11 +202,11 @@ export default function ItemDetailModal({ item, onClose, dispatch }: ItemDetailM
             <div style={{ display: "flex", gap: "0.5rem" }}>
               {editing ? (
                 <>
-                  <button className="btn-secondary" onClick={() => { setEditing(false); setForm({}); }} style={{ padding: "0.5rem 0.875rem", fontSize: "0.6875rem" }}>Cancelar</button>
-                  <button className="btn-primary" onClick={handleSave} style={{ padding: "0.5rem 0.875rem", fontSize: "0.6875rem", gap: "0.25rem" }}><Save size={13} /> Salvar</button>
+                  <Button variant="secondary" onClick={() => { setEditing(false); setForm({}); }} style={{ padding: "0.5rem 0.875rem", fontSize: "0.6875rem" }}>Cancelar</Button>
+                  <Button variant="primary" onClick={handleSave} style={{ padding: "0.5rem 0.875rem", fontSize: "0.6875rem", gap: "0.25rem" }}><Save size={13} /> Salvar</Button>
                 </>
               ) : (
-                <button className="btn-secondary" onClick={() => setEditing(true)} style={{ padding: "0.5rem 0.875rem", fontSize: "0.6875rem", gap: "0.25rem" }}><Edit2 size={12} /> Editar</button>
+                <Button variant="secondary" onClick={() => setEditing(true)} style={{ padding: "0.5rem 0.875rem", fontSize: "0.6875rem", gap: "0.25rem" }}><Edit2 size={12} /> Editar</Button>
               )}
             </div>
 
@@ -218,9 +219,9 @@ export default function ItemDetailModal({ item, onClose, dispatch }: ItemDetailM
                   <Trash2 size={13} /> Confirmar remoção
                 </button>
               ) : (
-                <button className="btn-secondary" onClick={() => setConfirmDelete(true)} style={{ padding: "0.5rem 0.875rem", fontSize: "0.6875rem", color: "var(--tertiary)", borderColor: "rgba(255,136,129,0.3)", gap: "0.25rem" }}>
+                <Button variant="secondary" onClick={() => setConfirmDelete(true)} style={{ padding: "0.5rem 0.875rem", fontSize: "0.6875rem", color: "var(--tertiary)", borderColor: "rgba(255,136,129,0.3)", gap: "0.25rem" }}>
                   <Trash2 size={13} /> Remover
-                </button>
+                </Button>
               )
             )}
           </div>
@@ -234,13 +235,13 @@ export default function ItemDetailModal({ item, onClose, dispatch }: ItemDetailM
           <div>
             <label className="input-label">Quantidade a movimentar</label>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginTop: "0.5rem" }}>
-              <button
-                className="btn-secondary"
+              <Button
+                variant="secondary"
                 onClick={() => setDelta((d) => Math.max(0, d - 1))}
                 style={{ padding: "0.5rem", width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center" }}
               >
                 <Minus size={13} />
-              </button>
+              </Button>
 
               <input
                 className="input-field"
@@ -251,13 +252,13 @@ export default function ItemDetailModal({ item, onClose, dispatch }: ItemDetailM
                 style={{ textAlign: "center", fontSize: "1.25rem", fontFamily: "var(--font-headline)", fontWeight: 700, maxWidth: 100 }}
               />
 
-              <button
-                className="btn-secondary"
+              <Button
+                variant="secondary"
                 onClick={() => setDelta((d) => d + 1)}
                 style={{ padding: "0.5rem", width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center" }}
               >
                 <Plus size={13} />
-              </button>
+              </Button>
 
               <span className="label-sm" style={{ fontSize: "0.75rem" }}>{item.unidade}</span>
             </div>
@@ -298,25 +299,25 @@ export default function ItemDetailModal({ item, onClose, dispatch }: ItemDetailM
 
           {/* Action buttons */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
-            <button
-              className="btn-secondary"
+            <Button
+              variant="secondary"
               disabled={delta <= 0 || item.quantidade - delta < 0}
               onClick={() => handleAdjust(-1)}
               style={{ padding: "0.625rem", fontSize: "0.6875rem", gap: "0.375rem", justifyContent: "center", display: "flex", alignItems: "center", opacity: delta <= 0 ? 0.4 : 1, cursor: delta <= 0 ? "not-allowed" : "pointer", color: "var(--tertiary)" }}
             >
               <Minus size={13} />
               Saída / Consumo
-            </button>
+            </Button>
 
-            <button
-              className="btn-primary"
+            <Button
+              variant="primary"
               disabled={delta <= 0}
               onClick={() => handleAdjust(1)}
               style={{ padding: "0.625rem", fontSize: "0.6875rem", gap: "0.375rem", justifyContent: "center", display: "flex", alignItems: "center", opacity: delta <= 0 ? 0.5 : 1, cursor: delta <= 0 ? "not-allowed" : "pointer" }}
             >
               <Plus size={13} />
               Entrada / Reposição
-            </button>
+            </Button>
           </div>
         </div>
       )}

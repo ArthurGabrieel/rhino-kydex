@@ -8,6 +8,8 @@ import { COLUNAS, KanbanStatus, Prioridade } from "./types";
 import KanbanColumn from "./KanbanColumn";
 import CardDetailModal from "./CardDetailModal";
 import NewOrderModal from "./NewOrderModal";
+import { useToast } from "@/components/ui/Toast";
+import { Button } from "@/components/ui/Button";
 
 type FilterPrioridade = Prioridade | "todas";
 type FilterOperador = string | "todos";
@@ -23,6 +25,9 @@ export default function KanbanBoard() {
   // Modal state — store only ID, derive live pedido from state
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [newOrderOpen, setNewOrderOpen] = useState(false);
+
+  // Toast
+  const { showToast } = useToast();
 
   // Live selected pedido (always fresh from state — comments update instantly)
   const selectedPedido = useMemo(
@@ -114,25 +119,22 @@ export default function KanbanBoard() {
           </div>
 
           <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-            {/* Filter toggle */}
-            <button
-              className={showFilters ? "btn-primary" : "btn-secondary"}
-              onClick={() => setShowFilters((v) => !v)}
-              style={{ padding: "0.5rem 0.875rem", gap: "0.375rem", fontSize: "0.6875rem" }}
-            >
-              <Filter size={13} />
-              Filtrar
-            </button>
-
-            <button
-              id="btn-novo-pedido"
-              className="btn-primary"
-              onClick={() => setNewOrderOpen(true)}
-              style={{ gap: "0.375rem" }}
-            >
-              <Plus size={14} />
-              Novo Pedido
-            </button>
+            <div style={{ display: "flex", gap: "0.5rem" }}>
+              <Button
+                variant={showFilters ? "primary" : "secondary"}
+                onClick={() => setShowFilters(!showFilters)}
+                style={{ gap: "0.375rem" }}
+              >
+                <Filter size={14} /> Filtros
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() => setNewOrderOpen(true)}
+                style={{ gap: "0.375rem" }}
+              >
+                <Plus size={14} /> Novo Pedido
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -360,12 +362,14 @@ export default function KanbanBoard() {
         pedido={selectedPedido}
         onClose={() => setSelectedId(null)}
         dispatch={dispatch}
+        onDelete={(ref: string) => showToast(`Pedido ${ref} excluído.`, "info")}
       />
 
       <NewOrderModal
         open={newOrderOpen}
         onClose={() => setNewOrderOpen(false)}
         dispatch={dispatch}
+        onSuccess={(ref: string) => showToast(`Novo pedido ${ref} adicionado ao kanban!`, "success")}
       />
     </div>
   );

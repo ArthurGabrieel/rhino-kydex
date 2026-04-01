@@ -122,18 +122,18 @@ export const estoque: ItemEstoque[] = [
 // LogEntry type imported from components/estoque/types.ts
 
 export const logAtividades: LogEntry[] = [
-  { id: "1", hora: "14:32:18", tipo: "producao", mensagem: "PED-2380 CONCLUIDO → EXPEDICAO por JORGE" },
-  { id: "2", hora: "14:21:05", tipo: "saida", mensagem: "OUTGOING: FIN-GLK-17 (-2 UN) · Solicitante: JORGE" },
-  { id: "3", hora: "14:18:22", tipo: "alerta", mensagem: "ALERT: KY-BLK-02 BELOW MINIMUM (8/20 FLS)" },
-  { id: "4", hora: "14:10:45", tipo: "entrada", mensagem: "INCOMING: HW-CHI-025 (+1000 UN) · Fornecedor: TAC SUPPLY" },
-  { id: "5", hora: "13:55:12", tipo: "auth", mensagem: "USER: OPERADOR_JORGE AUTH_OK · Session: SES-4821" },
-  { id: "6", hora: "13:40:30", tipo: "producao", mensagem: "PED-2381 INICIADO → MOLDAGEM por RICARDO" },
-  { id: "7", hora: "13:22:10", tipo: "alerta", mensagem: "ALERT: KY-GRN-02 APPROACHING MINIMUM (14/15 FLS)" },
-  { id: "8", hora: "13:01:44", tipo: "saida", mensagem: "OUTGOING: FIN-GLK-19 (-1 UN) · Solicitante: MARCOS" },
-  { id: "9", hora: "12:45:00", tipo: "entrada", mensagem: "INCOMING: HW-EYE-88 (+500 UN) · Fornecedor: HARDWARE TÁTICO" },
-  { id: "10", hora: "12:30:18", tipo: "producao", mensagem: "PED-2388 INICIADO → MOLDAGEM por JORGE" },
-  { id: "11", hora: "11:55:02", tipo: "auth", mensagem: "USER: OPERADOR_RICARDO AUTH_OK · Session: SES-4820" },
-  { id: "12", hora: "11:20:35", tipo: "alerta", mensagem: "ALERT: HW-RVT-04 BELOW MINIMUM (180/200 UN)" },
+  { id: "1", hora: "14:32:18", tipo: "producao", mensagem: "Pedido PED-2380 concluído e enviado para expedição por Jorge." },
+  { id: "2", hora: "14:21:05", tipo: "saida", mensagem: "Retirada de 2 unidades do Rhino Holster IWB G17. Solicitado por: Jorge." },
+  { id: "3", hora: "14:18:22", tipo: "alerta", mensagem: "Estoque crítico: Kydex Tactical Black. Restam apenas 8 folhas." },
+  { id: "4", hora: "14:10:45", tipo: "entrada", mensagem: "Entrada de 1.000 Parafusos Chicago. Fornecedor: TAC SUPPLY." },
+  { id: "5", hora: "13:55:12", tipo: "auth", mensagem: "Login no sistema: Operador Jorge." },
+  { id: "6", hora: "13:40:30", tipo: "producao", mensagem: "Pedido PED-2381 iniciado na moldagem por Ricardo." },
+  { id: "7", hora: "13:22:10", tipo: "alerta", mensagem: "Atenção: Kydex Ranger Green próximo ao limite mínimo (14 folhas restantes)." },
+  { id: "8", hora: "13:01:44", tipo: "saida", mensagem: "Retirada de 1 unidade do Rhino Holster IWB G19. Solicitado por: Marcos." },
+  { id: "9", hora: "12:45:00", tipo: "entrada", mensagem: "Entrada de 500 Ilhós Black Oxide. Fornecedor: HARDWARE TÁTICO." },
+  { id: "10", hora: "12:30:18", tipo: "producao", mensagem: "Pedido PED-2388 iniciado na moldagem por Jorge." },
+  { id: "11", hora: "11:55:02", tipo: "auth", mensagem: "Login no sistema: Operador Ricardo." },
+  { id: "12", hora: "11:20:35", tipo: "alerta", mensagem: "Estoque crítico: Rebite 4mm Latão. Restam apenas 180 unidades." },
 ];
 
 // === ALERTAS ===

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Package, Plus } from "lucide-react";
+import { Package } from "lucide-react";
 import Modal from "@/components/ui/Modal";
+import { Button } from "@/components/ui/Button";
 import {
   ItemEstoque,
   CategoriaEstoque,
@@ -17,6 +18,7 @@ interface AddItemModalProps {
   open: boolean;
   onClose: () => void;
   dispatch: React.Dispatch<EstoqueAction>;
+  onSuccess?: (nome: string) => void;
 }
 
 const DEFAULT_FORM = {
@@ -31,7 +33,7 @@ const DEFAULT_FORM = {
 
 type FormState = typeof DEFAULT_FORM;
 
-export default function AddItemModal({ open, onClose, dispatch }: AddItemModalProps) {
+export default function AddItemModal({ open, onClose, dispatch, onSuccess }: AddItemModalProps) {
   const [form, setForm] = useState<FormState>(DEFAULT_FORM);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
 
@@ -68,6 +70,7 @@ export default function AddItemModal({ open, onClose, dispatch }: AddItemModalPr
     dispatch({ type: "ADD_ITEM", item });
     setForm(DEFAULT_FORM);
     setErrors({});
+    onSuccess?.(item.nome);
     onClose();
   };
 
@@ -197,13 +200,13 @@ export default function AddItemModal({ open, onClose, dispatch }: AddItemModalPr
 
         {/* Actions */}
         <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", paddingTop: "0.75rem", borderTop: "1px solid rgba(85,67,53,0.15)" }}>
-          <button className="btn-secondary" onClick={onClose} style={{ padding: "0.5rem 1rem", fontSize: "0.6875rem" }}>
+          <Button variant="secondary" onClick={onClose} style={{ padding: "0.5rem 1rem", fontSize: "0.6875rem" }}>
             Cancelar
-          </button>
-          <button className="btn-primary" onClick={handleSubmit} style={{ padding: "0.5rem 1.125rem", fontSize: "0.6875rem", gap: "0.375rem" }}>
+          </Button>
+          <Button variant="primary" onClick={handleSubmit} style={{ padding: "0.5rem 1.125rem", fontSize: "0.6875rem", gap: "0.375rem" }}>
             <Package size={13} />
             Cadastrar Item
-          </button>
+          </Button>
         </div>
       </div>
     </Modal>

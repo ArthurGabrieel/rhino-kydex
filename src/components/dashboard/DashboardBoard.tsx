@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { TrendingUp, Target, Activity, AlertTriangle, ArrowUpRight, Clock } from "lucide-react";
+import { TrendingUp, Target, Activity, AlertTriangle, ArrowUpRight, Clock, Download, Loader2 } from "lucide-react";
 import { kpis, dados7d, dados30d, dados90d, dadosYtd } from "@/lib/mock-data";
 import { KpiCard, FadeSection } from "./primitives";
+import Modal from "@/components/ui/Modal";
+import { useToast } from "@/components/ui/Toast";
+import { Button } from "@/components/ui/Button";
 import { AlertasBanner } from "./AlertasBanner";
 import { ProductionCharts } from "./ProductionCharts";
 import { DistribuicaoBarChart } from "./DistribuicaoBarChart";
@@ -19,6 +22,9 @@ const RANGE_DATA: Record<RangeKey, typeof dados7d> = {
 
 export function DashboardBoard() {
   const [range, setRange] = useState<RangeKey>("30d");
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const { showToast } = useToast();
   const chartData = RANGE_DATA[range];
 
   const metaPercent   = Math.round((kpis.pedidosMes / kpis.metaMensal) * 100);
@@ -41,27 +47,41 @@ export function DashboardBoard() {
             <p className="label-sm">Visão operacional em tempo real · Comparado ao mês anterior</p>
           </div>
 
-          {/* Date range pill */}
-          <div style={{ display: "flex", background: "var(--surface-container-low)", padding: "4px", gap: 0, alignSelf: "center" }}>
-            {DATE_RANGES.map(({ key, label }) => (
-              <button
-                key={key}
-                onClick={() => setRange(key)}
-                style={{
-                  padding: "0.625rem 1.125rem",
-                  background: range === key ? "var(--primary)" : "transparent",
-                  border: "none", cursor: "pointer",
-                  fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.06em",
-                  fontFamily: "var(--font-headline)",
-                  color: range === key ? "var(--on-primary)" : "var(--on-surface-variant)",
-                  transition: "all 200ms ease",
-                  textTransform: "uppercase",
-                  minWidth: 48,
-                }}
-              >
-                {label}
-              </button>
-            ))}
+          <div style={{ display: "flex", gap: "1rem", alignSelf: "center" }}>
+            {/* Export button */}
+            <Button
+              variant="secondary"
+              onClick={() => setIsExportModalOpen(true)}
+              style={{
+                padding: "0.625rem 1.125rem",
+                fontSize: "0.6875rem",
+                border: "1px solid var(--outline-variant)"
+              }}
+            >
+              <Download size={14} />
+              Exportar
+            </Button>
+
+            {/* Date range pill */}
+            <div style={{ display: "flex", background: "var(--surface-container-low)", padding: "4px", gap: 0 }}>
+              {DATE_RANGES.map(({ key, label }) => (
+                <Button
+                  key={key}
+                  variant={range === key ? "primary" : "secondary"}
+                  onClick={() => setRange(key)}
+                  style={{
+                    padding: "0.625rem 1.125rem",
+                    border: "none", cursor: "pointer",
+                    fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.06em",
+                    transition: "all 200ms ease",
+                    minWidth: 48,
+                    borderRadius: 0
+                  }}
+                >
+                  {label}
+                </Button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -92,6 +112,45 @@ export function DashboardBoard() {
         <DistribuicaoBarChart range={range} chartData={chartData} />
 
       </div>
+
+      {/* ── Export Modal ── */}
+      <Modal
+        open={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+        title="Confirmar Exportação"
+        subtitle="Gerar relatório de atividades Excel"
+        width={420}
+      >
+        <p className="body-md" style={{ marginBottom: "2rem" }}>
+          Tem certeza de que deseja exportar os dados do período selecionado de <strong>{range}</strong>? Esta ação processará todo o histórico operacional e gerará um arquivo XLS formatado.
+        </p>
+
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
+          <Button
+            variant="secondary"
+            onClick={() => setIsExportModalOpen(false)}
+          >
+            Cancelar
+          </Button>
+          <Button
+            variant="primary"
+            disabled={isExporting}
+            style={{ opacity: isExporting ? 0.7 : 1, cursor: isExporting ? "wait" : "pointer" }}
+            onClick={() => {
+              setIsExporting(true);
+              // TODO: Integração real da exportação aqui
+              setTimeout(() => {
+                setIsExporting(false);
+                setIsExportModalOpen(false);
+                showToast("Exportação de dados concluída com sucesso.", "success");
+              }, 1500);
+            }}
+          >
+            {isExporting ? <Loader2 size={16} className="animate-spin" /> : null}
+            {isExporting ? "Processando..." : "Confirmar Exportação"}
+          </Button>
+        </div>
+      </Modal>
     </div>
   );
 }

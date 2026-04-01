@@ -15,11 +15,13 @@ import Modal from "@/components/ui/Modal";
 import { Pedido, COLUNAS, COLUNA_ORDER, Prioridade, Comentario } from "./types";
 import { KanbanAction } from "./kanban-reducer";
 import { operadores, operadorAtivo } from "@/lib/mock-data";
+import { Button } from "@/components/ui/Button";
 
 interface CardDetailModalProps {
   pedido: Pedido | null;
   onClose: () => void;
   dispatch: React.Dispatch<KanbanAction>;
+  onDelete?: (msg: string) => void;
 }
 
 type Tab = "detalhes" | "comentarios";
@@ -28,6 +30,7 @@ export default function CardDetailModal({
   pedido,
   onClose,
   dispatch,
+  onDelete,
 }: CardDetailModalProps) {
   const [tab, setTab] = useState<Tab>("detalhes");
   const [editing, setEditing] = useState(false);
@@ -70,6 +73,7 @@ export default function CardDetailModal({
 
   const handleDelete = () => {
     dispatch({ type: "DELETE_ORDER", id: pedido.id });
+    onDelete?.(pedido.ref);
     onClose();
   };
 
@@ -232,35 +236,34 @@ export default function CardDetailModal({
               <Value>{pedido.observacoes ? pedido.observacoes : <span style={{ opacity: 0.35 }}>Nenhuma observação</span>}</Value>
             )}
           </Field>
-
           {/* Action buttons */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1rem", borderTop: "1px solid rgba(85,67,53,0.15)", flexWrap: "wrap", gap: "0.75rem" }}>
             <div style={{ display: "flex", gap: "0.5rem" }}>
-              <button className="btn-secondary" onClick={() => handleMove("prev")} disabled={currentIdx === 0} style={{ padding: "0.5rem 0.75rem", fontSize: "0.6875rem", opacity: currentIdx === 0 ? 0.35 : 1, cursor: currentIdx === 0 ? "not-allowed" : "pointer", gap: "0.25rem" }}>
+              <Button variant="secondary" onClick={() => handleMove("prev")} disabled={currentIdx === 0} style={{ padding: "0.5rem 0.75rem", fontSize: "0.6875rem", opacity: currentIdx === 0 ? 0.35 : 1, cursor: currentIdx === 0 ? "not-allowed" : "pointer", gap: "0.25rem" }}>
                 <ChevronLeft size={13} /> Recuar
-              </button>
-              <button className="btn-primary" onClick={() => handleMove("next")} disabled={currentIdx === COLUNA_ORDER.length - 1} style={{ padding: "0.5rem 0.75rem", fontSize: "0.6875rem", opacity: currentIdx === COLUNA_ORDER.length - 1 ? 0.5 : 1, cursor: currentIdx === COLUNA_ORDER.length - 1 ? "not-allowed" : "pointer", gap: "0.25rem" }}>
+              </Button>
+              <Button variant="primary" onClick={() => handleMove("next")} disabled={currentIdx === COLUNA_ORDER.length - 1} style={{ padding: "0.5rem 0.75rem", fontSize: "0.6875rem", opacity: currentIdx === COLUNA_ORDER.length - 1 ? 0.5 : 1, cursor: currentIdx === COLUNA_ORDER.length - 1 ? "not-allowed" : "pointer", gap: "0.25rem" }}>
                 Avançar <ChevronRight size={13} />
-              </button>
+              </Button>
             </div>
 
             <div style={{ display: "flex", gap: "0.5rem" }}>
               {editing ? (
                 <>
-                  <button className="btn-secondary" onClick={handleCancel} style={{ padding: "0.5rem 0.75rem", fontSize: "0.6875rem" }}>Cancelar</button>
-                  <button className="btn-primary" onClick={handleSave} style={{ padding: "0.5rem 0.75rem", fontSize: "0.6875rem", gap: "0.25rem" }}><Save size={13} /> Salvar</button>
+                  <Button variant="secondary" onClick={handleCancel} style={{ padding: "0.5rem 0.75rem", fontSize: "0.6875rem" }}>Cancelar</Button>
+                  <Button variant="primary" onClick={handleSave} style={{ padding: "0.5rem 0.75rem", fontSize: "0.6875rem", gap: "0.25rem" }}><Save size={13} /> Salvar</Button>
                 </>
               ) : (
                 <>
-                  <button className="btn-secondary" onClick={() => setEditing(true)} style={{ padding: "0.5rem 0.75rem", fontSize: "0.6875rem" }}>Editar</button>
+                  <Button variant="secondary" onClick={() => setEditing(true)} style={{ padding: "0.5rem 0.75rem", fontSize: "0.6875rem" }}>Editar</Button>
                   {confirmDelete ? (
                     <button onClick={handleDelete} style={{ padding: "0.5rem 0.875rem", fontSize: "0.6875rem", background: "var(--tertiary-container)", color: "var(--on-tertiary)", border: "none", cursor: "pointer", fontFamily: "var(--font-headline)", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "0.25rem" }}>
                       <Trash2 size={13} /> Confirmar
                     </button>
                   ) : (
-                    <button className="btn-secondary" onClick={() => setConfirmDelete(true)} style={{ padding: "0.5rem 0.75rem", fontSize: "0.6875rem", color: "var(--tertiary)", borderColor: "rgba(255,136,129,0.3)", gap: "0.25rem" }}>
+                     <Button variant="secondary" onClick={() => setConfirmDelete(true)} style={{ padding: "0.5rem 0.75rem", fontSize: "0.6875rem", color: "var(--tertiary)", borderColor: "rgba(255,136,129,0.3)", gap: "0.25rem" }}>
                       <Trash2 size={13} /> Excluir
-                    </button>
+                    </Button>
                   )}
                 </>
               )}
