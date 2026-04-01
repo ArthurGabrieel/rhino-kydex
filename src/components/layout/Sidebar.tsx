@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -8,7 +9,6 @@ import {
   Package,
   Settings,
   LogOut,
-  Crosshair,
 } from "lucide-react";
 import { operadorAtivo } from "@/lib/mock-data";
 
@@ -32,18 +32,15 @@ export default function Sidebar() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
-          <div
-            style={{
-              width: 36,
-              height: 36,
-              background: "linear-gradient(135deg, #ffb877 0%, #f7921f 100%)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-            }}
-          >
-            <Crosshair size={18} color="#4b2700" strokeWidth={2.5} />
+          <div style={{ width: 36, height: 36, flexShrink: 0, position: "relative" }}>
+            <Image
+              src="/favicon.webp"
+              alt="Rhino Kydex"
+              width={36}
+              height={36}
+              style={{ objectFit: "contain" }}
+              priority
+            />
           </div>
           <div>
             <div

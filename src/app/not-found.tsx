@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, AlertTriangle } from "lucide-react";
 
 // Glitch flicker — randomly shifts the "404" text by a few px
@@ -54,6 +55,18 @@ export default function NotFound() {
       ))}
 
       <div style={{ position: "relative", zIndex: 1, textAlign: "center", maxWidth: 520 }}>
+
+        {/* Logo */}
+        <div style={{ marginBottom: "2rem" }}>
+          <Image
+            src="/favicon.webp"
+            alt="Rhino Kydex"
+            width={52}
+            height={52}
+            style={{ objectFit: "contain", opacity: 0.7 }}
+            priority
+          />
+        </div>
 
         {/* Error chip */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", marginBottom: "2rem" }}>
