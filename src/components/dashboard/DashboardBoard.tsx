@@ -42,20 +42,21 @@ export function DashboardBoard() {
           </div>
 
           {/* Date range pill */}
-          <div style={{ display: "flex", background: "var(--surface-container-low)", padding: "3px", gap: 0 }}>
+          <div style={{ display: "flex", background: "var(--surface-container-low)", padding: "4px", gap: 0, alignSelf: "center" }}>
             {DATE_RANGES.map(({ key, label }) => (
               <button
                 key={key}
                 onClick={() => setRange(key)}
                 style={{
-                  padding: "0.375rem 0.875rem",
+                  padding: "0.625rem 1.125rem",
                   background: range === key ? "var(--primary)" : "transparent",
                   border: "none", cursor: "pointer",
-                  fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.06em",
+                  fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.06em",
                   fontFamily: "var(--font-headline)",
                   color: range === key ? "var(--on-primary)" : "var(--on-surface-variant)",
                   transition: "all 200ms ease",
                   textTransform: "uppercase",
+                  minWidth: 48,
                 }}
               >
                 {label}
