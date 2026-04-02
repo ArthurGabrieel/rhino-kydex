@@ -13,6 +13,7 @@ interface KanbanColumnProps {
   draggingId: string | null;
   onDragStart: (id: string) => void;
   onDragEnd: () => void;
+  isMobile?: boolean;
 }
 
 export default function KanbanColumn({
@@ -23,6 +24,7 @@ export default function KanbanColumn({
   draggingId,
   onDragStart,
   onDragEnd,
+  isMobile = false,
 }: KanbanColumnProps) {
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -44,9 +46,12 @@ export default function KanbanColumn({
 
   return (
     <div
+      className="kanban-col"
       style={{
-        width: 230,
-        flexShrink: 0,
+        width: "100%",
+        minWidth: isMobile ? undefined : 216,
+        maxWidth: "100%",
+        flexShrink: isMobile ? 0 : 1,
         display: "flex",
         flexDirection: "column",
         background: "var(--surface-container-lowest)",

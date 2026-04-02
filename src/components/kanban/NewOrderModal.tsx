@@ -6,6 +6,7 @@ import { Pedido, KanbanStatus, Prioridade, COLUNAS } from "./types";
 import { KanbanAction } from "./kanban-reducer";
 import { operadores } from "@/lib/mock-data";
 import { Button } from "@/components/ui/Button";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 interface NewOrderModalProps {
   open: boolean;
@@ -77,6 +78,7 @@ export default function NewOrderModal({
   dispatch,
   onSuccess,
 }: NewOrderModalProps) {
+  const isMobile = useMediaQuery("(max-width: 1024px)");
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -154,9 +156,9 @@ export default function NewOrderModal({
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
 
         {/* 2-col grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "1rem" }}>
 
-          <FormField label="Cliente *" error={errors.cliente} colSpan={2}>
+          <FormField label="Cliente *" error={errors.cliente} colSpan={2} isMobile={isMobile}>
             <input
               className="input-field"
               placeholder="Ex: Sgto. Almeida"
@@ -192,7 +194,7 @@ export default function NewOrderModal({
             </select>
           </FormField>
 
-          <FormField label="Arma *" error={errors.arma} colSpan={2}>
+          <FormField label="Arma *" error={errors.arma} colSpan={2} isMobile={isMobile}>
             <select
               className="input-field"
               value={form.arma}
@@ -225,7 +227,7 @@ export default function NewOrderModal({
             </select>
           </FormField>
 
-          <FormField label="Operador responsável" colSpan={2}>
+          <FormField label="Operador responsável" colSpan={2} isMobile={isMobile}>
             <select
               className="input-field"
               value={form.operador}
@@ -241,7 +243,7 @@ export default function NewOrderModal({
             </select>
           </FormField>
 
-          <FormField label="Observações" colSpan={2}>
+          <FormField label="Observações" colSpan={2} isMobile={isMobile}>
             <textarea
               className="input-field"
               value={form.observacoes}
@@ -261,20 +263,21 @@ export default function NewOrderModal({
             gap: "0.75rem",
             paddingTop: "0.75rem",
             borderTop: "1px solid rgba(85,67,53,0.15)",
+            flexWrap: isMobile ? "wrap" : undefined,
           }}
         >
           <Button
             type="button"
             variant="secondary"
             onClick={handleClose}
-            style={{ padding: "0.625rem 1.25rem" }}
+            style={{ padding: "0.625rem 1.25rem", width: isMobile ? "100%" : undefined, justifyContent: isMobile ? "center" : undefined }}
           >
             Cancelar
           </Button>
           <Button
             type="submit"
             variant="primary"
-            style={{ padding: "0.625rem 1.5rem" }}
+            style={{ padding: "0.625rem 1.5rem", width: isMobile ? "100%" : undefined, justifyContent: isMobile ? "center" : undefined }}
           >
             Criar Pedido
           </Button>
@@ -291,14 +294,18 @@ function FormField({
   children,
   error,
   colSpan = 1,
+  isMobile = false,
 }: {
   label: string;
   children: React.ReactNode;
   error?: string;
   colSpan?: 1 | 2;
+  isMobile?: boolean;
 }) {
+  const effectiveColSpan = isMobile ? 1 : colSpan;
+
   return (
-    <div style={{ gridColumn: `span ${colSpan}` }}>
+    <div style={{ gridColumn: `span ${effectiveColSpan}` }}>
       <label className="input-label" style={{ marginBottom: "0.375rem" }}>
         {label}
       </label>

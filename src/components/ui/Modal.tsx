@@ -42,6 +42,7 @@ export default function Modal({
 
   return (
     <div
+      className="app-modal-overlay"
       ref={overlayRef}
       onClick={(e) => e.target === overlayRef.current && onClose()}
       style={{
@@ -58,6 +59,7 @@ export default function Modal({
       }}
     >
       <div
+        className="app-modal-panel"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
@@ -74,6 +76,7 @@ export default function Modal({
       >
         {/* Header */}
         <div
+          className="app-modal-header"
           style={{
             display: "flex",
             justifyContent: "space-between",
@@ -130,7 +133,7 @@ export default function Modal({
         </div>
 
         {/* Content */}
-        <div style={{ overflowY: "auto", flex: 1, padding: "1.5rem" }}>
+        <div className="app-modal-content" style={{ overflowY: "auto", flex: 1, padding: "1.5rem" }}>
           {children}
         </div>
       </div>

@@ -110,7 +110,7 @@ function toMockEmailBase(input: string) {
     .replace(/^\.|\.$/g, "");
 }
 
-export const pedidos: Pedido[] = [
+const pedidosBase: Pedido[] = [
   // Pedidos Abertos
   {
     id: "P-2401",
@@ -261,7 +261,9 @@ export const pedidos: Pedido[] = [
     hora: "Concluído 09:40",
     operador: "Marcos",
   },
-].map((pedido, index) => {
+];
+
+export const pedidos: Pedido[] = pedidosBase.map((pedido, index) => {
   const vencimentos = [
     "2026-03-29",
     "2026-03-31",

@@ -12,6 +12,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { logAtividades, pedidos } from "@/lib/mock-data";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 type AuditSection =
   | "dashboard"
@@ -192,6 +193,7 @@ function formatSource(tipo: string) {
 }
 
 export function AuditoriaTab() {
+  const isMobile = useMediaQuery("(max-width: 1024px)");
   const [sectionFilter, setSectionFilter] = useState<AuditSection | "todas">(
     "todas"
   );
@@ -303,7 +305,7 @@ export function AuditoriaTab() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
+          gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(auto-fit, minmax(160px, 1fr))",
           gap: "1rem",
         }}
       >
@@ -446,33 +448,121 @@ export function AuditoriaTab() {
       </div>
 
       <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "92px 130px 120px 1fr 98px",
-            gap: "0.75rem",
-            padding: "0.625rem 1rem",
-            background: "var(--surface-container)",
-          }}
-        >
-          {[
-            "Hora",
-            "Seção",
-            "Ator",
-            "Evento",
-            "Nível",
-          ].map((header) => (
-            <span key={header} className="label-sm" style={{ fontSize: "0.5625rem" }}>
-              {header}
-            </span>
-          ))}
-        </div>
+        {!isMobile && (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "92px 130px 120px 1fr 98px",
+              gap: "0.75rem",
+              padding: "0.625rem 1rem",
+              background: "var(--surface-container)",
+            }}
+          >
+            {[
+              "Hora",
+              "Seção",
+              "Ator",
+              "Evento",
+              "Nível",
+            ].map((header) => (
+              <span key={header} className="label-sm" style={{ fontSize: "0.5625rem" }}>
+                {header}
+              </span>
+            ))}
+          </div>
+        )}
 
         <div style={{ maxHeight: 430, overflowY: "auto" }}>
           {filteredEntries.map((entry) => {
             const sectionMeta = SECTION_META[entry.section];
             const severityMeta = SEVERITY_META[entry.severity];
             const SectionIcon = sectionMeta.icon;
+
+            if (isMobile) {
+              return (
+                <div
+                  key={entry.id}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.5rem",
+                    padding: "0.75rem",
+                    borderTop: "1px solid rgba(85,67,53,0.1)",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem", flexWrap: "wrap" }}>
+                    <span
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.25rem",
+                        width: "fit-content",
+                        padding: "0.2rem 0.45rem",
+                        background: "var(--surface-container-low)",
+                        color: sectionMeta.color,
+                        fontSize: "0.625rem",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
+                        fontWeight: 700,
+                      }}
+                    >
+                      <SectionIcon size={11} /> {sectionMeta.label}
+                    </span>
+
+                    <span
+                      style={{
+                        display: "inline-flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        padding: "0.2rem 0.45rem",
+                        fontSize: "0.625rem",
+                        fontWeight: 700,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
+                        color: severityMeta.color,
+                        background: severityMeta.bg,
+                        width: "fit-content",
+                      }}
+                    >
+                      {severityMeta.label}
+                    </span>
+                  </div>
+
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+                    <span style={{ fontFamily: "monospace", fontSize: "0.75rem", color: "var(--on-surface-variant)" }}>
+                      {entry.hora}
+                    </span>
+                    <span style={{ fontSize: "0.75rem", color: "var(--on-surface)", fontWeight: 600 }}>
+                      {entry.actor}
+                    </span>
+                  </div>
+
+                  <div>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: "0.8125rem",
+                        color: "var(--on-surface-variant)",
+                        lineHeight: 1.45,
+                      }}
+                    >
+                      {entry.message}
+                    </p>
+                    <span
+                      style={{
+                        display: "inline-block",
+                        marginTop: "0.25rem",
+                        fontSize: "0.625rem",
+                        color: "var(--on-surface-variant)",
+                        opacity: 0.7,
+                      }}
+                    >
+                      Origem: {entry.source}
+                    </span>
+                  </div>
+                </div>
+              );
+            }
 
             return (
               <div

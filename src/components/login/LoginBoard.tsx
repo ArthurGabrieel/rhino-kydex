@@ -80,18 +80,20 @@ export function LoginBoard() {
 
   return (
     <>
-      <div style={{
+      <div className="login-shell" style={{
         minHeight: "100vh",
         background: "var(--surface-container-lowest)",
         display: "flex",
         alignItems: "stretch",
       }}>
         {/* Painel esquerdo — hero */}
-        <LoginHero />
+        <div className="login-hero-panel">
+          <LoginHero />
+        </div>
 
         {/* Painel direito — formulário ou recuperação */}
-        <div style={{
-          width: 440, flexShrink: 0,
+        <div className="login-form-panel" style={{
+          width: "min(440px, 100%)", flexShrink: 0,
           background: "var(--surface-container-low)",
           display: "flex", flexDirection: "column",
           justifyContent: "center",

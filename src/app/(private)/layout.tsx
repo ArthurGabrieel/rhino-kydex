@@ -1,14 +1,9 @@
-import Sidebar from "@/components/layout/Sidebar";
+import PrivateShell from "@/components/layout/PrivateShell";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div>
-      <Sidebar />
-      <div className="main-content tactical-grid">{children}</div>
-    </div>
-  );
+  return <PrivateShell>{children}</PrivateShell>;
 }

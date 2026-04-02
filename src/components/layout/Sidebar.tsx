@@ -9,6 +9,7 @@ import {
   Package,
   Settings,
   LogOut,
+  X,
 } from "lucide-react";
 import { useSession } from "@/components/auth/SessionProvider";
 
@@ -19,7 +20,15 @@ const navItems = [
   { href: "/configuracoes", label: "Configurações", icon: Settings },
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+  mobileOpen?: boolean;
+  onCloseMobile?: () => void;
+}
+
+export default function Sidebar({
+  mobileOpen = false,
+  onCloseMobile,
+}: SidebarProps) {
   const pathname = usePathname();
   const { user, logout } = useSession();
   const visibleNavItems = navItems.filter(
@@ -27,14 +36,24 @@ export default function Sidebar() {
   );
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${mobileOpen ? "open" : ""}`}>
       {/* Logo */}
       <div
         style={{
+          position: "relative",
           padding: "1.5rem 1.25rem",
           borderBottom: "1px solid rgba(85,67,53,0.2)",
         }}
       >
+        <button
+          type="button"
+          className="sidebar-mobile-close"
+          onClick={onCloseMobile}
+          aria-label="Fechar menu"
+        >
+          <X size={16} />
+        </button>
+
         <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
           <div style={{ width: 36, height: 36, flexShrink: 0, position: "relative" }}>
             <Image
@@ -99,6 +118,7 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onCloseMobile}
               className={`sidebar-nav-item ${isActive ? "active" : ""}`}
             >
               <Icon size={16} strokeWidth={isActive ? 2.5 : 2} />
@@ -161,7 +181,13 @@ export default function Sidebar() {
           </div>
         </div>
 
-        <Link href="/login" onClick={logout}>
+        <Link
+          href="/login"
+          onClick={() => {
+            logout();
+            onCloseMobile?.();
+          }}
+        >
           <button
             className="btn-secondary"
             style={{

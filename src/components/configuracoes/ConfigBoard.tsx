@@ -37,7 +37,7 @@ export function ConfigBoard() {
     <div>
       {/* Header */}
       <div className="page-header">
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.375rem" }}>
+        <div className="config-header-row" style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.375rem" }}>
           <h1 className="headline-md">Configurações</h1>
           <span className="chip">Backoffice</span>
           {user.role === "Colaborador" && (
@@ -51,7 +51,7 @@ export function ConfigBoard() {
 
       <div className="page-body" style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         {/* Tab bar */}
-        <div style={{
+        <div className="config-tabs-bar" style={{
           display: "flex",
           borderBottom: "1px solid rgba(85,67,53,0.2)",
           gap: 0,
@@ -62,6 +62,7 @@ export function ConfigBoard() {
               <button
                 key={key}
                 onClick={() => setTab(key)}
+                className="config-tab-btn"
                 style={{
                   display: "flex",
                   alignItems: "center",

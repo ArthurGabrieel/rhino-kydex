@@ -6,6 +6,7 @@ import { pedidos as initialPedidos } from "@/lib/mock-data";
 import { kanbanReducer } from "./kanban-reducer";
 import {
   COLUNAS,
+  KanbanStatus,
   Prioridade,
   PRIORIDADE_ORDER,
   isPedidoAtrasado,
@@ -15,11 +16,16 @@ import CardDetailModal from "./CardDetailModal";
 import NewOrderModal from "./NewOrderModal";
 import { useToast } from "@/components/ui/Toast";
 import { Button } from "@/components/ui/Button";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 type FilterPrioridade = Prioridade | "todas";
 type FilterAtraso = "todos" | "atrasados" | "em_dia";
 
 export default function KanbanBoard() {
+  const isMobile = useMediaQuery("(max-width: 1024px)");
+  const desktopMinColumnWidth = 216;
+  const desktopBoardMinWidth = desktopMinColumnWidth * COLUNAS.length + 32;
+
   const [state, dispatch] = useReducer(kanbanReducer, {
     pedidos: initialPedidos,
   });
@@ -44,6 +50,7 @@ export default function KanbanBoard() {
   const [filterPrioridade, setFilterPrioridade] = useState<FilterPrioridade>("todas");
   const [filterAtraso, setFilterAtraso] = useState<FilterAtraso>("todos");
   const [showFilters, setShowFilters] = useState(false);
+  const [mobileColuna, setMobileColuna] = useState<KanbanStatus>("aberto");
 
   // Filtered pedidos
   const pedidosFiltrados = useMemo(() => {
@@ -69,6 +76,16 @@ export default function KanbanBoard() {
     [pedidosFiltrados]
   );
 
+  const colunasVisiveis = useMemo(
+    () => (isMobile ? COLUNAS.filter((coluna) => coluna.id === mobileColuna) : COLUNAS),
+    [isMobile, mobileColuna]
+  );
+
+  const pedidosNaColunaMobile = useMemo(
+    () => pedidosFiltrados.filter((pedido) => pedido.status === mobileColuna).length,
+    [pedidosFiltrados, mobileColuna]
+  );
+
   const clearFilters = () => {
     setFilterPrioridade("todas");
     setFilterAtraso("todos");
@@ -79,6 +96,7 @@ export default function KanbanBoard() {
       {/* Board header */}
       <div className="page-header">
         <div
+          className="kanban-header-row"
           style={{
             display: "flex",
             justifyContent: "space-between",
@@ -136,7 +154,7 @@ export default function KanbanBoard() {
             </p>
           </div>
 
-          <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+          <div className="kanban-header-actions" style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
             <div style={{ display: "flex", gap: "0.5rem" }}>
               <Button
                 variant={showFilters ? "primary" : "secondary"}
@@ -280,22 +298,64 @@ export default function KanbanBoard() {
             )}
           </div>
         )}
+
+        {isMobile && (
+          <div className="kanban-mobile-stage-picker" style={{ marginTop: "1rem", display: "flex", gap: "0.35rem", overflowX: "auto", paddingBottom: "0.35rem" }}>
+            {COLUNAS.map((coluna) => {
+              const isActive = mobileColuna === coluna.id;
+              const count = pedidosFiltrados.filter((pedido) => pedido.status === coluna.id).length;
+
+              return (
+                <button
+                  key={coluna.id}
+                  type="button"
+                  onClick={() => setMobileColuna(coluna.id)}
+                  style={{
+                    border: "none",
+                    background: isActive ? "var(--surface-container-high)" : "var(--surface-container-low)",
+                    color: isActive ? "var(--on-surface)" : "var(--on-surface-variant)",
+                    padding: "0.45rem 0.6rem",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.35rem",
+                    whiteSpace: "nowrap",
+                    fontFamily: "var(--font-body)",
+                    fontSize: "0.6875rem",
+                    fontWeight: isActive ? 700 : 600,
+                    letterSpacing: "0.04em",
+                    textTransform: "uppercase",
+                    borderBottom: isActive ? `2px solid ${coluna.cor}` : "2px solid transparent",
+                    cursor: "pointer",
+                  }}
+                >
+                  <span>{coluna.label}</span>
+                  <span style={{ opacity: 0.7 }}>{count}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Board */}
       <div
         className="page-body"
-        style={{ overflowX: "auto", paddingBottom: "2rem" }}
+        style={{ overflowX: isMobile ? "visible" : "auto", paddingBottom: "2rem" }}
       >
         <div
+          className="kanban-board-track"
           style={{
-            display: "flex",
-            gap: "0.5rem",
-            minWidth: "max-content",
+            display: "grid",
+            gap: "0.75rem",
+            gridTemplateColumns: isMobile
+              ? "1fr"
+              : `repeat(${colunasVisiveis.length}, minmax(${desktopMinColumnWidth}px, 1fr))`,
+            minWidth: isMobile ? undefined : `max(100%, ${desktopBoardMinWidth}px)`,
             alignItems: "flex-start",
+            width: "100%",
           }}
         >
-          {COLUNAS.map((coluna) => {
+          {colunasVisiveis.map((coluna) => {
             const colPedidos = pedidosFiltrados
               .filter((p) => p.status === coluna.id)
               .sort((a, b) => {
@@ -326,76 +386,88 @@ export default function KanbanBoard() {
                 draggingId={draggingId}
                 onDragStart={(id) => setDraggingId(id)}
                 onDragEnd={() => setDraggingId(null)}
+                isMobile={isMobile}
               />
             );
           })}
         </div>
 
-        {/* Summary footer */}
-        <div
-          style={{
-            marginTop: "1.5rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: "1rem",
-          }}
-        >
-          {/* Priority legend */}
-          <div
-            style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}
-          >
-            <span className="label-sm" style={{ opacity: 0.5 }}>
-              Prioridade:
+        {isMobile && (
+          <div style={{ marginTop: "0.75rem", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.5rem", padding: "0.5rem 0.125rem" }}>
+            <span className="label-sm" style={{ opacity: 0.7 }}>Etapa atual</span>
+            <span className="chip" style={{ color: "var(--on-surface)", background: "var(--surface-container-high)" }}>
+              {COLUNAS.find((coluna) => coluna.id === mobileColuna)?.label} · {pedidosNaColunaMobile}
             </span>
-            {[
-              { label: "Alta", bg: "rgba(255,136,129,0.15)", color: "var(--tertiary)" },
-              { label: "Média", bg: "rgba(255,184,119,0.12)", color: "var(--primary)" },
-              { label: "Normal", bg: "rgba(85,67,53,0.2)", color: "var(--on-surface-variant)" },
-            ].map((item) => (
-              <span
-                key={item.label}
-                style={{
-                  padding: "0.125rem 0.5rem",
-                  background: item.bg,
-                  color: item.color,
-                  fontSize: "0.5625rem",
-                  fontWeight: 700,
-                  letterSpacing: "0.07em",
-                  textTransform: "uppercase",
-                }}
-              >
-                {item.label}
-              </span>
-            ))}
           </div>
+        )}
 
-          {/* Column summary */}
+        {/* Summary footer */}
+        {!isMobile && (
           <div
-            style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}
+            style={{
+              marginTop: "1.5rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: "1rem",
+            }}
           >
-            {COLUNAS.map((col) => {
-              const count = state.pedidos.filter(
-                (p) => p.status === col.id
-              ).length;
-              return (
-                <div
-                  key={col.id}
-                  style={{ display: "flex", alignItems: "center", gap: "0.375rem" }}
+            {/* Priority legend */}
+            <div
+              style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}
+            >
+              <span className="label-sm" style={{ opacity: 0.5 }}>
+                Prioridade:
+              </span>
+              {[
+                { label: "Alta", bg: "rgba(255,136,129,0.15)", color: "var(--tertiary)" },
+                { label: "Média", bg: "rgba(255,184,119,0.12)", color: "var(--primary)" },
+                { label: "Normal", bg: "rgba(85,67,53,0.2)", color: "var(--on-surface-variant)" },
+              ].map((item) => (
+                <span
+                  key={item.label}
+                  style={{
+                    padding: "0.125rem 0.5rem",
+                    background: item.bg,
+                    color: item.color,
+                    fontSize: "0.5625rem",
+                    fontWeight: 700,
+                    letterSpacing: "0.07em",
+                    textTransform: "uppercase",
+                  }}
                 >
+                  {item.label}
+                </span>
+              ))}
+            </div>
+
+            {/* Column summary */}
+            <div
+              style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}
+            >
+              {COLUNAS.map((col) => {
+                const count = state.pedidos.filter(
+                  (p) => p.status === col.id
+                ).length;
+                return (
                   <div
-                    style={{ width: 6, height: 6, background: col.cor }}
-                  />
-                  <span className="label-sm" style={{ fontSize: "0.5625rem" }}>
-                    {col.label}:{" "}
-                    <strong style={{ color: "var(--on-surface)" }}>{count}</strong>
-                  </span>
-                </div>
-              );
-            })}
+                    key={col.id}
+                    style={{ display: "flex", alignItems: "center", gap: "0.375rem" }}
+                  >
+                    <div
+                      style={{ width: 6, height: 6, background: col.cor }}
+                    />
+                    <span className="label-sm" style={{ fontSize: "0.5625rem" }}>
+                      {col.label}: {" "}
+                      <strong style={{ color: "var(--on-surface)" }}>{count}</strong>
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Modals */}

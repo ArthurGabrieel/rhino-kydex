@@ -16,6 +16,7 @@ import {
   LOCALIZACOES_COMUNS,
 } from "./types";
 import { EstoqueAction } from "./estoque-reducer";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 interface ItemDetailModalProps {
   item: ItemEstoque | null;
@@ -34,6 +35,7 @@ type Tab = "info" | "ajuste";
 type PreviewTarget = "saida" | "entrada" | null;
 
 export default function ItemDetailModal({ item, onClose, dispatch, isReadOnly }: ItemDetailModalProps) {
+  const isMobile = useMediaQuery("(max-width: 1024px)");
   const [tab, setTab] = useState<Tab>("info");
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<Partial<ItemEstoque>>({});
@@ -93,7 +95,7 @@ export default function ItemDetailModal({ item, onClose, dispatch, isReadOnly }:
       width={500}
     >
       {/* Status banner */}
-      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.25rem", padding: "0.75rem 1rem", background: st.bg }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.25rem", padding: "0.75rem 1rem", background: st.bg, flexWrap: isMobile ? "wrap" : undefined }}>
         <Icon size={16} color={st.color} />
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: st.color }}>
@@ -142,7 +144,7 @@ export default function ItemDetailModal({ item, onClose, dispatch, isReadOnly }:
       {/* ── TAB: INFO / EDIÇÃO ── */}
       {tab === "info" && (
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "1rem" }}>
             <Field label="Categoria">
               {editing ? (
                 <select
@@ -246,7 +248,7 @@ export default function ItemDetailModal({ item, onClose, dispatch, isReadOnly }:
           {/* Delta control */}
           <div>
             <label className="input-label">Quantidade a movimentar</label>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginTop: "0.5rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginTop: "0.5rem", flexWrap: isMobile ? "wrap" : undefined }}>
               <Button
                 variant="secondary"
                 onClick={() => setDelta((d) => Math.max(0, d - 1))}
@@ -261,7 +263,7 @@ export default function ItemDetailModal({ item, onClose, dispatch, isReadOnly }:
                 min={0}
                 value={delta}
                 onChange={(e) => setDelta(Math.max(0, Number(e.target.value)))}
-                style={{ textAlign: "center", fontSize: "1.25rem", fontFamily: "var(--font-headline)", fontWeight: 700, maxWidth: 100 }}
+                style={{ textAlign: "center", fontSize: "1.25rem", fontFamily: "var(--font-headline)", fontWeight: 700, maxWidth: isMobile ? "100%" : 100 }}
               />
 
               <Button
@@ -292,7 +294,7 @@ export default function ItemDetailModal({ item, onClose, dispatch, isReadOnly }:
             <div style={{ fontSize: "0.625rem", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--on-surface-variant)", marginBottom: "0.75rem" }}>
               Preview da operação
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.875rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: "0.875rem" }}>
               <div style={{ background: "var(--surface-container-lowest)", padding: "0.75rem", textAlign: "center" }}>
                 <div style={{ fontFamily: "var(--font-headline)", fontSize: "1.375rem", fontWeight: 700, color: "var(--on-surface-variant)", opacity: 0.7 }}>
                   {item.quantidade}
@@ -342,7 +344,7 @@ export default function ItemDetailModal({ item, onClose, dispatch, isReadOnly }:
           </div>
 
           {/* Action buttons */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "0.75rem" }}>
             <Button
               variant="secondary"
               disabled={delta <= 0 || item.quantidade - delta < 0}

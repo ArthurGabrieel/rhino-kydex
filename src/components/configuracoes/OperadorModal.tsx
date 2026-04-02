@@ -5,6 +5,7 @@ import { X, ShieldAlert, KeyRound, LayoutGrid, Box, Factory, BarChart } from "lu
 import { Button } from "../ui/Button";
 import { useToast } from "../ui/Toast";
 import type { OperadorConfig } from "./types";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 type ModalTab = "dados" | "acesso";
 
@@ -37,6 +38,7 @@ export function OperadorModal({
   onSave: (op: Omit<OperadorConfig, "id" | "avatar"> | OperadorConfig) => void;
 }) {
   const [activeTab, setActiveTab] = useState<ModalTab>("dados");
+  const isMobile = useMediaQuery("(max-width: 1024px)");
 
   // State
   const [nome, setNome] = useState(operador?.nome || "");
@@ -125,26 +127,28 @@ export function OperadorModal({
       background: "rgba(0,0,0,0.45)",
       backdropFilter: "blur(4px)",
       display: "flex",
-      alignItems: "center",
+      alignItems: isMobile ? "flex-end" : "center",
       justifyContent: "center",
       zIndex: 9999,
-      padding: "1rem",
+      padding: isMobile ? "0" : "1rem",
     }}>
       <div style={{
         background: "var(--surface)",
         width: "100%",
-        maxWidth: "600px",
-        height: "85vh",
-        maxHeight: "700px",
+        maxWidth: isMobile ? "100%" : "600px",
+        height: isMobile ? "min(94svh, 100%)" : "85vh",
+        maxHeight: isMobile ? "min(94svh, 100%)" : "700px",
         display: "flex",
         flexDirection: "column",
+        border: isMobile ? "1px solid rgba(85,67,53,0.2)" : "none",
+        borderBottom: "none",
         boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
         animation: "slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
       }}>
         {/* Header */}
         <div style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
-          padding: "1.25rem 1.5rem",
+          padding: isMobile ? "1rem" : "1.25rem 1.5rem",
           background: "var(--surface-container-low)",
           borderBottom: "1px solid rgba(85,67,53,0.1)"
         }}>
@@ -170,9 +174,10 @@ export function OperadorModal({
         {/* Tab Navigation */}
         <div style={{
           display: "flex",
+          overflowX: "auto",
           borderBottom: "1px solid rgba(85,67,53,0.1)",
           background: "var(--surface-container-lowest)",
-          padding: "0 1.5rem"
+          padding: isMobile ? "0 1rem" : "0 1.5rem"
         }}>
           {TAB_OPTIONS.map((tab) => (
             <button
@@ -187,7 +192,9 @@ export function OperadorModal({
                 color: activeTab === tab.id ? "var(--primary)" : "var(--on-surface-variant)",
                 borderBottom: activeTab === tab.id ? "2px solid var(--primary)" : "2px solid transparent",
                 cursor: "pointer",
-                transition: "all 0.2s"
+                transition: "all 0.2s",
+                whiteSpace: "nowrap",
+                flexShrink: 0,
               }}
             >
               {tab.label}
@@ -199,11 +206,11 @@ export function OperadorModal({
         <div style={{
           flex: 1,
           overflowY: "auto",
-          padding: "1.5rem",
+          padding: isMobile ? "1rem" : "1.5rem",
         }}>
           {activeTab === "dados" && (
             <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "1rem" }}>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
                   <label className="label-sm">NOME</label>
                   <input
@@ -235,7 +242,7 @@ export function OperadorModal({
                 />
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "1rem" }}>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
                   <label className="label-sm">FUNÇÃO PRINCIPAL</label>
                   <select
@@ -268,13 +275,14 @@ export function OperadorModal({
 
               <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                 <label className="label-sm">NÍVEL / SENIORIDADE</label>
-                <div style={{ display: "flex", gap: "0.5rem" }}>
+                <div style={{ display: "flex", gap: "0.5rem", flexWrap: isMobile ? "wrap" : undefined }}>
                   {NIVEL_OPTIONS.map((nv) => (
                     <button
                       key={nv}
                       onClick={() => setNivel(nv)}
                       style={{
-                        flex: 1,
+                        flex: isMobile ? "1 1 calc(50% - 0.25rem)" : 1,
+                        minHeight: 40,
                         padding: "0.625rem",
                         background: nivel === nv ? "var(--primary)" : "var(--surface-container-high)",
                         color: nivel === nv ? "#fff" : "var(--on-surface)",
@@ -331,7 +339,7 @@ export function OperadorModal({
 
               {/* Status Switch (Only for existing users) */}
               {isEditing && (
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem", background: ativo ? "rgba(126,200,142,0.1)" : "rgba(255,136,129,0.1)", borderLeft: ativo ? "2px solid #7ec88e" : "2px solid var(--tertiary)" }}>
+                <div style={{ display: "flex", alignItems: isMobile ? "flex-start" : "center", flexDirection: isMobile ? "column" : "row", gap: isMobile ? "0.75rem" : undefined, justifyContent: "space-between", padding: "1rem", background: ativo ? "rgba(126,200,142,0.1)" : "rgba(255,136,129,0.1)", borderLeft: ativo ? "2px solid #7ec88e" : "2px solid var(--tertiary)" }}>
                   <div>
                     <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--on-surface)" }}>
                       STATUS DA CONTA: {ativo ? "ATIVA" : "BLOQUEADA"}
@@ -343,7 +351,7 @@ export function OperadorModal({
                   <Button 
                       variant="secondary"
                       onClick={() => setAtivo(!ativo)}
-                      style={{ background: "var(--surface)", border: "1px solid rgba(85,67,53,0.2)" }}
+                      style={{ background: "var(--surface)", border: "1px solid rgba(85,67,53,0.2)", width: isMobile ? "100%" : undefined, justifyContent: isMobile ? "center" : undefined }}
                   >
                       {ativo ? "Suspender Acesso" : "Reativar Acesso"}
                   </Button>
@@ -383,7 +391,7 @@ export function OperadorModal({
 
               {/* Password Action */}
               {isEditing ? (
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "1rem", padding: "1rem", background: "rgba(255,136,129,0.05)", borderLeft: "2px solid var(--tertiary)" }}>
+                <div style={{ display: "flex", alignItems: isMobile ? "flex-start" : "center", flexDirection: isMobile ? "column" : "row", gap: isMobile ? "0.75rem" : undefined, justifyContent: "space-between", marginTop: "1rem", padding: "1rem", background: "rgba(255,136,129,0.05)", borderLeft: "2px solid var(--tertiary)" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                     <ShieldAlert size={18} color="var(--tertiary)" />
                     <div>
@@ -391,7 +399,7 @@ export function OperadorModal({
                       <div style={{ fontSize: "0.75rem", color: "var(--on-surface-variant)" }}>O funcionário esqueceu a senha?</div>
                     </div>
                   </div>
-                  <Button variant="secondary" onClick={handleResetPassword}>
+                  <Button variant="secondary" onClick={handleResetPassword} style={{ width: isMobile ? "100%" : undefined, justifyContent: isMobile ? "center" : undefined }}>
                     <KeyRound size={14} style={{ marginRight: "0.5rem" }} /> RESETAR SENHA
                   </Button>
                 </div>
@@ -419,15 +427,16 @@ export function OperadorModal({
 
         {/* Footer */}
         <div style={{
-          padding: "1.25rem 1.5rem",
+          padding: isMobile ? "1rem" : "1.25rem 1.5rem",
           background: "var(--surface-container)",
           borderTop: "1px solid rgba(85,67,53,0.1)",
           display: "flex",
           justifyContent: "flex-end",
+          flexDirection: isMobile ? "column-reverse" : "row",
           gap: "0.75rem"
         }}>
-          <Button variant="secondary" onClick={onClose}>Cancelar</Button>
-          <Button variant="primary" onClick={handleSave}>
+          <Button variant="secondary" onClick={onClose} style={{ width: isMobile ? "100%" : undefined, justifyContent: isMobile ? "center" : undefined }}>Cancelar</Button>
+          <Button variant="primary" onClick={handleSave} style={{ width: isMobile ? "100%" : undefined, justifyContent: isMobile ? "center" : undefined }}>
             {isEditing ? "Salvar Alterações" : "Confirmar e Criar"}
           </Button>
         </div>

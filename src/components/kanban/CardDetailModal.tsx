@@ -26,6 +26,7 @@ import {
 import { KanbanAction } from "./kanban-reducer";
 import { operadores, operadorAtivo } from "@/lib/mock-data";
 import { Button } from "@/components/ui/Button";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 interface CardDetailModalProps {
   pedido: Pedido | null;
@@ -42,6 +43,7 @@ export default function CardDetailModal({
   dispatch,
   onDelete,
 }: CardDetailModalProps) {
+  const isMobile = useMediaQuery("(max-width: 1024px)");
   const [tab, setTab] = useState<Tab>("dados");
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<Partial<Pedido>>({});
@@ -121,7 +123,7 @@ export default function CardDetailModal({
       width={560}
     >
       {/* Status pipeline */}
-      <div style={{ display: "flex", marginBottom: "1.25rem", background: "var(--surface-container-lowest)", padding: "0.125rem" }}>
+      <div style={{ display: "flex", marginBottom: "1.25rem", background: "var(--surface-container-lowest)", padding: "0.125rem", overflowX: isMobile ? "auto" : undefined }}>
         {COLUNAS.map((col, idx) => {
           const isCurrent = col.id === pedido.status;
           const isPast = idx < currentIdx;
@@ -146,7 +148,7 @@ export default function CardDetailModal({
       </div>
 
       {/* Tabs */}
-      <div style={{ display: "flex", gap: 0, marginBottom: "1.25rem", borderBottom: "1px solid rgba(85,67,53,0.15)" }}>
+      <div style={{ display: "flex", gap: 0, marginBottom: "1.25rem", borderBottom: "1px solid rgba(85,67,53,0.15)", overflowX: isMobile ? "auto" : undefined }}>
         {([
           { id: "dados", label: "Dados do Pedido", icon: Settings2 },
           { id: "atividade", label: `Atividade e Comentários${logs.length > 0 ? ` (${logs.length})` : ""}`, icon: Activity },
@@ -203,7 +205,7 @@ export default function CardDetailModal({
             </div>
           )}
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "1rem" }}>
             <Field label="Modelo">
               {editing ? (
                 <input className="input-field" value={form.modelo ?? pedido.modelo} onChange={(e) => setForm({ ...form, modelo: e.target.value })} />
@@ -255,7 +257,7 @@ export default function CardDetailModal({
             </Field>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "1rem" }}>
             <Field label="Documento">
               <Value>{pedido.documento ?? "---"}</Value>
             </Field>
@@ -281,18 +283,19 @@ export default function CardDetailModal({
             </Field>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 128px", gap: "1rem", alignItems: "start" }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 128px", gap: "1rem", alignItems: "start" }}>
             <Field label="Descrição do Produto">
               <Value>{pedido.descricaoProduto ?? "Sem descrição detalhada."}</Value>
             </Field>
 
-            <div>
+            <div style={{ width: isMobile ? "100%" : undefined }}>
               <label className="input-label" style={{ marginBottom: "0.375rem" }}>
                 Foto
               </label>
               <div
                 style={{
-                  width: 128,
+                  width: isMobile ? "100%" : 128,
+                  maxWidth: isMobile ? 220 : undefined,
                   height: 128,
                   background: "var(--surface-container-low)",
                   border: "1px solid rgba(85,67,53,0.2)",
@@ -357,7 +360,7 @@ export default function CardDetailModal({
       {tab === "atividade" && (
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           {/* Comment list */}
-          <div style={{ maxHeight: 320, overflowY: "auto", display: "flex", flexDirection: "column", gap: "0.625rem" }}>
+          <div style={{ maxHeight: isMobile ? 260 : 320, overflowY: "auto", display: "flex", flexDirection: "column", gap: "0.625rem" }}>
             {logs.length === 0 ? (
               <div style={{ padding: "2.5rem 1rem", textAlign: "center" }}>
                 <MessageSquare size={28} color="var(--on-surface-variant)" style={{ margin: "0 auto 0.75rem", opacity: 0.25 }} />

@@ -35,7 +35,7 @@ export function DashboardBoard() {
     <div>
       {/* ── Page Header ── */}
       <div className="page-header">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div className="dashboard-header-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.375rem" }}>
               <h1 className="headline-md">Dashboard</h1>
@@ -47,11 +47,12 @@ export function DashboardBoard() {
             <p className="label-sm">Visão operacional em tempo real · Comparado ao mês anterior</p>
           </div>
 
-          <div style={{ display: "flex", gap: "1rem", alignSelf: "center" }}>
+          <div className="dashboard-header-actions" style={{ display: "flex", gap: "1rem", alignSelf: "center" }}>
             {/* Export button */}
             <Button
               variant="secondary"
               onClick={() => setIsExportModalOpen(true)}
+              className="dashboard-export-btn"
               style={{
                 padding: "0.625rem 1.125rem",
                 fontSize: "0.6875rem",
@@ -63,12 +64,13 @@ export function DashboardBoard() {
             </Button>
 
             {/* Date range pill */}
-            <div style={{ display: "flex", background: "var(--surface-container-low)", padding: "4px", gap: 0 }}>
+            <div className="dashboard-range-pill" style={{ display: "flex", background: "var(--surface-container-low)", padding: "4px", gap: 0 }}>
               {DATE_RANGES.map(({ key, label }) => (
                 <Button
                   key={key}
                   variant={range === key ? "primary" : "secondary"}
                   onClick={() => setRange(key)}
+                  className="dashboard-range-btn"
                   style={{
                     padding: "0.625rem 1.125rem",
                     border: "none", cursor: "pointer",
@@ -89,7 +91,7 @@ export function DashboardBoard() {
       <div className="page-body" style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
 
         {/* ── KPI row 1 ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
+        <div className="dashboard-kpis-grid-4" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
           <KpiCard label="Pedidos este mês"    value={kpis.pedidosMes}      trend={pedidosGrowth} sub="vs. mês anterior"         icon={TrendingUp}   accent  delay={0}   />
           <KpiCard label="Meta mensal"          value={metaPercent}          suffix="%"            sub={`${kpis.pedidosMes} / ${kpis.metaMensal} un`} icon={Target}      accent  delay={80}  />
           <KpiCard label="Em produção agora"    value={kpis.itensEmProducao}                       sub="Pedidos ativos"           icon={Activity}             delay={160} />
@@ -97,7 +99,7 @@ export function DashboardBoard() {
         </div>
 
         {/* ── KPI row 2 ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+        <div className="dashboard-kpis-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
           <KpiCard label="Receita do mês"             value={kpis.receitaMes} prefix="R$ " trend={receitaGrowth} sub="vs. mês anterior"              icon={ArrowUpRight} accent delay={300} />
           <KpiCard label="Tempo médio de produção"    value={138}             suffix=" min"                       sub="Por pedido · últimas 4 semanas" icon={Clock}               delay={360} />
         </div>

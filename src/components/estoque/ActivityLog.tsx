@@ -52,6 +52,7 @@ export default function ActivityLog({ entries: initialEntries }: ActivityLogProp
 
   return (
     <div
+      className="activity-log-panel"
       style={{
         background: "var(--surface-container-lowest)",
         padding: "1.25rem",
@@ -97,6 +98,7 @@ export default function ActivityLog({ entries: initialEntries }: ActivityLogProp
 
       {/* Entries */}
       <div
+        className="activity-log-list"
         style={{
           display: "flex",
           flexDirection: "column",

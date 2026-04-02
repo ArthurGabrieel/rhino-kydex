@@ -10,6 +10,7 @@ import { operadores, kpis } from "@/lib/mock-data";
 import { CustomTooltip, FadeSection } from "./primitives";
 import type { RangeKey } from "./types";
 import { RANGE_LABEL } from "./types";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 const SERIES = [
   { label: "Moldagem",   color: "var(--primary)", dataKey: "moldagem",   gradId: "gMoldagem",   stopColor: "#ffb877", opacity: 0.28 },
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export function ProductionCharts({ range, chartData }: Props) {
+  const isMobile = useMediaQuery("(max-width: 1024px)");
   const curveType = chartData.length <= 4 ? "linear" as const : "monotone" as const;
 
   const metaPercent = Math.round((kpis.pedidosMes / kpis.metaMensal) * 100);
@@ -37,16 +39,16 @@ export function ProductionCharts({ range, chartData }: Props) {
 
   return (
     <FadeSection delay={500}>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: "1rem" }}>
+      <div className="production-charts-grid" style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 320px", gap: "1rem" }}>
 
         {/* ── Area chart ── */}
         <div className="card" style={{ padding: "1.5rem" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+          <div className="production-chart-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", gap: "0.75rem", flexWrap: isMobile ? "wrap" : undefined }}>
             <div>
               <h2 className="title-md" style={{ marginBottom: "0.25rem" }}>Tendências de Produção</h2>
               <p className="label-sm">{RANGE_LABEL[range]} · por fase</p>
             </div>
-            <div style={{ display: "flex", gap: "1rem" }}>
+            <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
               {SERIES.map((s) => (
                 <div key={s.label} style={{ display: "flex", alignItems: "center", gap: "0.375rem" }}>
                   <div style={{ width: 8, height: 2, background: s.color }} />
@@ -56,8 +58,8 @@ export function ProductionCharts({ range, chartData }: Props) {
             </div>
           </div>
 
-          <ResponsiveContainer width="100%" height={220}>
-            <AreaChart data={chartData} margin={{ top: 0, right: 0, left: -24, bottom: 0 }}>
+          <ResponsiveContainer width="100%" height={isMobile ? 190 : 220}>
+            <AreaChart data={chartData} margin={{ top: 0, right: 0, left: isMobile ? -10 : -24, bottom: 0 }}>
               <defs>
                 {SERIES.map((s) => (
                   <linearGradient key={s.gradId} id={s.gradId} x1="0" y1="0" x2="0" y2="1">
@@ -67,8 +69,8 @@ export function ProductionCharts({ range, chartData }: Props) {
                 ))}
               </defs>
               <CartesianGrid strokeDasharray="none" stroke="rgba(85,67,53,0.1)" horizontal vertical={false} />
-              <XAxis dataKey="label" tick={{ fontSize: 10, fill: "#a38d7b", fontFamily: "Inter", letterSpacing: "0.04em" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: "#a38d7b", fontFamily: "Inter" }} axisLine={false} tickLine={false} />
+              <XAxis dataKey="label" tick={{ fontSize: isMobile ? 9 : 10, fill: "#a38d7b", fontFamily: "Inter", letterSpacing: "0.04em" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: isMobile ? 9 : 10, fill: "#a38d7b", fontFamily: "Inter" }} axisLine={false} tickLine={false} width={isMobile ? 20 : 28} />
               <Tooltip content={<CustomTooltip />} />
               {SERIES.map((s, i) => (
                 <Area

@@ -7,6 +7,7 @@ import {
 import { Zap } from "lucide-react";
 import { CustomTooltip, FadeSection } from "./primitives";
 import type { RangeKey } from "./types";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 interface Props {
   range: RangeKey;
@@ -14,10 +15,12 @@ interface Props {
 }
 
 export function DistribuicaoBarChart({ range, chartData }: Props) {
+  const isMobile = useMediaQuery("(max-width: 1024px)");
+
   return (
     <FadeSection delay={650}>
       <div className="card" style={{ padding: "1.5rem" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", gap: "0.75rem", flexWrap: isMobile ? "wrap" : undefined }}>
           <div>
             <h2 className="title-md" style={{ marginBottom: "0.25rem" }}>Distribuição por Fase</h2>
             <p className="label-sm">Volume comparado por etapa de produção</p>
@@ -30,20 +33,20 @@ export function DistribuicaoBarChart({ range, chartData }: Props) {
           </div>
         </div>
 
-        <ResponsiveContainer width="100%" height={chartData.length >= 10 ? 160 : 130}>
+        <ResponsiveContainer width="100%" height={isMobile ? 180 : chartData.length >= 10 ? 160 : 130}>
           <BarChart
             data={chartData}
             barCategoryGap={chartData.length <= 7 ? "40%" : "30%"}
-            margin={{ top: 0, right: 0, left: -24, bottom: 0 }}
+            margin={{ top: 0, right: 0, left: isMobile ? -10 : -24, bottom: 0 }}
           >
             <CartesianGrid strokeDasharray="none" stroke="rgba(85,67,53,0.08)" horizontal vertical={false} />
             <XAxis
               dataKey="label"
-              tick={{ fontSize: 9, fill: "#a38d7b", fontFamily: "Inter", letterSpacing: "0.04em" }}
+              tick={{ fontSize: isMobile ? 8 : 9, fill: "#a38d7b", fontFamily: "Inter", letterSpacing: "0.04em" }}
               axisLine={false} tickLine={false}
-              interval={chartData.length > 8 ? 1 : 0}
+              interval={isMobile ? Math.max(0, Math.floor(chartData.length / 6)) : chartData.length > 8 ? 1 : 0}
             />
-            <YAxis tick={{ fontSize: 9, fill: "#a38d7b" }} axisLine={false} tickLine={false} />
+            <YAxis tick={{ fontSize: isMobile ? 8 : 9, fill: "#a38d7b" }} axisLine={false} tickLine={false} width={isMobile ? 22 : 30} />
             <Tooltip content={<CustomTooltip />} cursor={false} />
             <Bar dataKey="moldagem"   name="Moldagem"   fill="#ffb877" radius={[0,0,0,0]} animationDuration={800}  />
             <Bar dataKey="acabamento" name="Acabamento" fill="#c7c6c6" radius={[0,0,0,0]} animationDuration={900}  />

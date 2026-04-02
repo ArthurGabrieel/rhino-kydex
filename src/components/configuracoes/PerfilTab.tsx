@@ -5,6 +5,7 @@ import { User, KeyRound, Save, ShieldCheck } from "lucide-react";
 import { Button } from "../ui/Button";
 import { useToast } from "../ui/Toast";
 import { useSession } from "@/components/auth/SessionProvider";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 function splitNomeCompleto(nomeCompleto: string) {
   const trimmed = nomeCompleto.trim();
@@ -26,6 +27,7 @@ function splitNomeCompleto(nomeCompleto: string) {
 export function PerfilTab() {
   const { showToast } = useToast();
   const { user, setUser } = useSession();
+  const isMobile = useMediaQuery("(max-width: 1024px)");
 
   const initialName = splitNomeCompleto(user.nome);
 
@@ -70,7 +72,7 @@ export function PerfilTab() {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "2rem", animation: "fadeIn 0.3s ease", paddingBottom: "2rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? "1.25rem" : "2rem", animation: "fadeIn 0.3s ease", paddingBottom: "2rem" }}>
       
       {/* SEÇÃO 1: DADOS CADASTRAIS */}
       <div style={{
@@ -79,7 +81,7 @@ export function PerfilTab() {
         display: "flex",
         flexDirection: "column",
       }}>
-        <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid rgba(85,67,53,0.1)", display: "flex", alignItems: "center", gap: "0.75rem", background: "var(--surface-container-lowest)" }}>
+        <div style={{ padding: isMobile ? "1rem" : "1.25rem 1.5rem", borderBottom: "1px solid rgba(85,67,53,0.1)", display: "flex", alignItems: "center", gap: "0.75rem", background: "var(--surface-container-lowest)" }}>
           <User size={20} color="var(--primary)" />
           <div>
             <h3 style={{ fontSize: "1rem", fontWeight: 700, margin: 0, color: "var(--on-surface)" }}>Informações Pessoais</h3>
@@ -87,7 +89,7 @@ export function PerfilTab() {
           </div>
         </div>
 
-        <div style={{ padding: "1.5rem", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem", maxWidth: "800px" }}>
+        <div style={{ padding: isMobile ? "1rem" : "1.5rem", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "1.25rem", maxWidth: isMobile ? "100%" : "800px" }}>
           
           <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
             <label className="label-sm">E-MAIL INSTITUCIONAL (LOGIN)</label>
@@ -102,7 +104,7 @@ export function PerfilTab() {
           </div>
 
           {/* Spacer */}
-          <div />
+          {!isMobile && <div />}
 
           <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
             <label className="label-sm">NOME</label>
@@ -124,8 +126,8 @@ export function PerfilTab() {
 
         </div>
 
-        <div style={{ padding: "1.25rem 1.5rem", borderTop: "1px solid rgba(85,67,53,0.1)", background: "var(--surface-container)", display: "flex", justifyContent: "flex-end" }}>
-          <Button variant="primary" onClick={handleUpdateProfile}>
+        <div style={{ padding: isMobile ? "1rem" : "1.25rem 1.5rem", borderTop: "1px solid rgba(85,67,53,0.1)", background: "var(--surface-container)", display: "flex", justifyContent: "flex-end" }}>
+          <Button variant="primary" onClick={handleUpdateProfile} style={{ width: isMobile ? "100%" : undefined, justifyContent: isMobile ? "center" : undefined }}>
             <Save size={16} style={{ marginRight: "0.5rem" }} /> SALVAR DADOS
           </Button>
         </div>
@@ -138,7 +140,7 @@ export function PerfilTab() {
         display: "flex",
         flexDirection: "column",
       }}>
-        <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid rgba(85,67,53,0.1)", display: "flex", alignItems: "center", gap: "0.75rem", background: "var(--surface-container-lowest)" }}>
+        <div style={{ padding: isMobile ? "1rem" : "1.25rem 1.5rem", borderBottom: "1px solid rgba(85,67,53,0.1)", display: "flex", alignItems: "center", gap: "0.75rem", background: "var(--surface-container-lowest)" }}>
           <ShieldCheck size={20} color="var(--tertiary)" />
           <div>
             <h3 style={{ fontSize: "1rem", fontWeight: 700, margin: 0, color: "var(--on-surface)" }}>Segurança e Credenciais</h3>
@@ -146,7 +148,7 @@ export function PerfilTab() {
           </div>
         </div>
 
-        <div style={{ padding: "1.5rem", display: "grid", gridTemplateColumns: "1fr", gap: "1.25rem", maxWidth: "400px" }}>
+        <div style={{ padding: isMobile ? "1rem" : "1.5rem", display: "grid", gridTemplateColumns: "1fr", gap: "1.25rem", maxWidth: isMobile ? "100%" : "400px" }}>
           
           <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
             <label className="label-sm">SENHA ATUAL</label>
@@ -183,8 +185,8 @@ export function PerfilTab() {
 
         </div>
 
-        <div style={{ padding: "1.25rem 1.5rem", borderTop: "1px solid rgba(85,67,53,0.1)", background: "var(--surface-container)", display: "flex", justifyContent: "flex-end" }}>
-          <Button variant="secondary" onClick={handleUpdatePassword} style={{ background: "var(--surface)", border: "1px solid rgba(85,67,53,0.2)" }}>
+        <div style={{ padding: isMobile ? "1rem" : "1.25rem 1.5rem", borderTop: "1px solid rgba(85,67,53,0.1)", background: "var(--surface-container)", display: "flex", justifyContent: "flex-end" }}>
+          <Button variant="secondary" onClick={handleUpdatePassword} style={{ background: "var(--surface)", border: "1px solid rgba(85,67,53,0.2)", width: isMobile ? "100%" : undefined, justifyContent: isMobile ? "center" : undefined }}>
             <KeyRound size={16} style={{ marginRight: "0.5rem" }} /> ATUALIZAR SENHA
           </Button>
         </div>
