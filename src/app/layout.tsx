@@ -4,7 +4,7 @@ import { ToastProvider } from "@/components/ui/Toast";
 import { SessionProvider } from "@/components/auth/SessionProvider";
 
 export const metadata: Metadata = {
-  title: "RHINO KYDEX | Tactical Ops",
+  title: "RHINO KYDEX",
   description: "Sistema de gerenciamento de produção — Rhino Kydex Systems",
 };
 

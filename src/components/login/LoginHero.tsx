@@ -10,12 +10,13 @@ export function LoginHero() {
     <div
       className="tactical-grid"
       style={{
-        flex: 1,
+        width: "100%",
+        height: "100%",
         background: "var(--background)",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        padding: "3rem",
+        padding: "2.75rem clamp(2rem, 4vw, 4rem)",
         position: "relative",
         overflow: "hidden",
       }}
@@ -46,41 +47,43 @@ export function LoginHero() {
       </div>
 
       {/* Conteúdo central */}
-      <div>
-        <div style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "0.5rem",
-          background: "rgba(247,146,31,0.1)",
-          padding: "0.25rem 0.75rem",
-          marginBottom: "1.5rem",
-        }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "flex-start", padding: "1rem 0" }}>
+        <div style={{ width: "100%", maxWidth: 560 }}>
           <div style={{
-            width: 6, height: 6,
-            background: "var(--primary)",
-            borderRadius: "50%",
-            animation: "pulse 1.5s ease-in-out infinite",
-          }} />
-          <span className="label-sm" style={{ color: "var(--primary)" }}>Sistema Operacional</span>
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            background: "rgba(247,146,31,0.1)",
+            padding: "0.25rem 0.75rem",
+            marginBottom: "1.5rem",
+          }}>
+            <div style={{
+              width: 6, height: 6,
+              background: "var(--primary)",
+              borderRadius: "50%",
+              animation: "pulse 1.5s ease-in-out infinite",
+            }} />
+            <span className="label-sm" style={{ color: "var(--primary)" }}>Sistema Operacional</span>
+          </div>
+
+          <h1 className="display-lg" style={{ marginBottom: "1.5rem", maxWidth: 520 }}>
+            Proteção
+            <br />
+            <span style={{ color: "var(--primary)" }}>e</span>
+            <br />
+            Excelência
+          </h1>
+
+          <p style={{
+            color: "var(--on-surface-variant)",
+            fontSize: "0.9375rem",
+            lineHeight: 1.7,
+            maxWidth: 430,
+          }}>
+            Sistema integrado de gerenciamento de produção para equipamentos
+            táticos de precisão.
+          </p>
         </div>
-
-        <h1 className="display-lg" style={{ marginBottom: "1.5rem", maxWidth: 480 }}>
-          Proteção
-          <br />
-          <span style={{ color: "var(--primary)" }}>e</span>
-          <br />
-          Excelência
-        </h1>
-
-        <p style={{
-          color: "var(--on-surface-variant)",
-          fontSize: "0.9375rem",
-          lineHeight: 1.7,
-          maxWidth: 360,
-        }}>
-          Sistema integrado de gerenciamento de produção para equipamentos
-          táticos de precisão.
-        </p>
       </div>
 
       {/* Rodapé */}

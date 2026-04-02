@@ -82,12 +82,14 @@ export function LoginBoard() {
     <>
       <div className="login-shell" style={{
         minHeight: "100vh",
+        width: "100%",
         background: "var(--surface-container-lowest)",
         display: "flex",
         alignItems: "stretch",
+        overflowX: "hidden",
       }}>
         {/* Painel esquerdo — hero */}
-        <div className="login-hero-panel">
+        <div className="login-hero-panel" style={{ flex: 1, minWidth: 0, display: "flex" }}>
           <LoginHero />
         </div>
 
