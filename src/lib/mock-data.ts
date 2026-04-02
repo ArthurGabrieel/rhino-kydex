@@ -101,6 +101,15 @@ export const vendasSemanais = dados30d.map((d) => ({ semana: d.label, ...d }));
 
 // === KANBAN — PEDIDOS (types re-exported from @/components/kanban/types) ===
 
+function toMockEmailBase(input: string) {
+  return input
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, ".")
+    .replace(/^\.|\.$/g, "");
+}
+
 export const pedidos: Pedido[] = [
   // Pedidos Abertos
   {
@@ -252,7 +261,49 @@ export const pedidos: Pedido[] = [
     hora: "Concluído 09:40",
     operador: "Marcos",
   },
-];
+].map((pedido, index) => {
+  const vencimentos = [
+    "2026-03-29",
+    "2026-03-31",
+    "2026-04-02",
+    "2026-04-01",
+    "2026-04-03",
+    "2026-04-04",
+    "2026-04-05",
+    "2026-04-06",
+    "2026-04-07",
+    "2026-04-08",
+    "2026-04-09",
+    "2026-04-10",
+  ];
+
+  const emailBase = toMockEmailBase(pedido.cliente);
+
+  return {
+    ...pedido,
+    revisor: index % 2 === 0 ? "Carla" : "Fernando",
+    tempoGarantia: "12 meses",
+    endereco: `Rua da Oficina Tática, bloco ${String.fromCharCode(65 + (index % 4))}`,
+    numero: String(100 + index),
+    email: `${emailBase || "cliente"}@example.com`,
+    documento:
+      index % 3 === 0
+        ? `CNPJ 12.345.67${index}/0001-${String(10 + index).padStart(2, "0")}`
+        : `CPF 123.456.78${index}-${String(10 + index).padStart(2, "0")}`,
+    descricaoProduto: `${pedido.modelo} para ${pedido.arma} com acabamento ${pedido.cor}.`,
+    foto: "/assets/mock_holster.png",
+    dataVencimento: vencimentos[index] ?? "2026-04-12",
+    logs: [
+      {
+        id: `SYS-INIT-${pedido.id}`,
+        tipo: "sistema",
+        autor: "Sistema",
+        texto: `Pedido registrado na etapa ${pedido.status}`,
+        hora: pedido.hora,
+      },
+    ],
+  };
+});
 
 // === ESTOQUE (Inventory) ===
 // Types imported from components/estoque/types.ts — no duplication

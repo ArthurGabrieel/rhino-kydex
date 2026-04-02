@@ -1,4 +1,10 @@
-import { Pedido, KanbanStatus, COLUNA_ORDER, Comentario } from "./types";
+import {
+  Pedido,
+  KanbanStatus,
+  COLUNA_ORDER,
+  COLUNAS,
+  LogKanban,
+} from "./types";
 
 // ─── State ────────────────────────────────────────────────────
 export interface KanbanState {
@@ -14,7 +20,33 @@ export type KanbanAction =
   | { type: "UPDATE_ORDER"; pedido: Partial<Pedido> & { id: string } }
   | { type: "DELETE_ORDER"; id: string }
   | { type: "ASSIGN_OPERATOR"; id: string; operador: string }
-  | { type: "ADD_COMMENT"; id: string; comentario: Comentario };
+  | { type: "ADD_COMMENT"; id: string; comentario: LogKanban };
+
+function nowHora() {
+  const now = new Date();
+  return `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+}
+
+function createSystemLog(autor: string, texto: string): LogKanban {
+  return {
+    id: `SYS-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+    tipo: "sistema",
+    autor,
+    texto,
+    hora: nowHora(),
+  };
+}
+
+function appendLog(pedido: Pedido, log: LogKanban) {
+  return {
+    ...pedido,
+    logs: [...(pedido.logs ?? []), log],
+  };
+}
+
+function getStatusLabel(status: KanbanStatus) {
+  return COLUNAS.find((col) => col.id === status)?.label ?? status;
+}
 
 // ─── Reducer ─────────────────────────────────────────────────
 export function kanbanReducer(
@@ -25,9 +57,14 @@ export function kanbanReducer(
     case "MOVE_CARD": {
       return {
         ...state,
-        pedidos: state.pedidos.map((p) =>
-          p.id === action.id ? { ...p, status: action.to } : p,
-        ),
+        pedidos: state.pedidos.map((p) => {
+          if (p.id !== action.id || p.status === action.to) return p;
+          const toLabel = getStatusLabel(action.to);
+          return appendLog(
+            { ...p, status: action.to },
+            createSystemLog("Sistema", `Card movido para ${toLabel}`),
+          );
+        }),
       };
     }
 
@@ -38,7 +75,12 @@ export function kanbanReducer(
           if (p.id !== action.id) return p;
           const idx = COLUNA_ORDER.indexOf(p.status);
           const next = COLUNA_ORDER[idx + 1];
-          return next ? { ...p, status: next } : p;
+          if (!next) return p;
+          const toLabel = getStatusLabel(next);
+          return appendLog(
+            { ...p, status: next },
+            createSystemLog("Sistema", `Card movido para ${toLabel}`),
+          );
         }),
       };
     }
@@ -50,13 +92,22 @@ export function kanbanReducer(
           if (p.id !== action.id) return p;
           const idx = COLUNA_ORDER.indexOf(p.status);
           const prev = COLUNA_ORDER[idx - 1];
-          return prev ? { ...p, status: prev } : p;
+          if (!prev) return p;
+          const toLabel = getStatusLabel(prev);
+          return appendLog(
+            { ...p, status: prev },
+            createSystemLog("Sistema", `Card movido para ${toLabel}`),
+          );
         }),
       };
     }
 
     case "ADD_ORDER": {
-      return { ...state, pedidos: [action.pedido, ...state.pedidos] };
+      const pedidoComLog = appendLog(
+        action.pedido,
+        createSystemLog("Sistema", "Pedido criado no Kanban"),
+      );
+      return { ...state, pedidos: [pedidoComLog, ...state.pedidos] };
     }
 
     case "UPDATE_ORDER": {
@@ -78,9 +129,13 @@ export function kanbanReducer(
     case "ASSIGN_OPERATOR": {
       return {
         ...state,
-        pedidos: state.pedidos.map((p) =>
-          p.id === action.id ? { ...p, operador: action.operador } : p,
-        ),
+        pedidos: state.pedidos.map((p) => {
+          if (p.id !== action.id) return p;
+          return appendLog(
+            { ...p, operador: action.operador },
+            createSystemLog("Sistema", `Operador atribuído: ${action.operador}`),
+          );
+        }),
       };
     }
 
@@ -91,7 +146,7 @@ export function kanbanReducer(
           p.id === action.id
             ? {
                 ...p,
-                comentarios: [...(p.comentarios ?? []), action.comentario],
+                logs: [...(p.logs ?? []), action.comentario],
               }
             : p,
         ),

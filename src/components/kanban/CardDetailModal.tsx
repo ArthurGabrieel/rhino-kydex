@@ -10,9 +10,19 @@ import {
   MessageSquare,
   Send,
   Settings2,
+  Activity,
+  AlertTriangle,
 } from "lucide-react";
+import Image from "next/image";
 import Modal from "@/components/ui/Modal";
-import { Pedido, COLUNAS, COLUNA_ORDER, Prioridade, Comentario } from "./types";
+import {
+  Pedido,
+  COLUNAS,
+  COLUNA_ORDER,
+  Prioridade,
+  LogKanban,
+  isPedidoAtrasado,
+} from "./types";
 import { KanbanAction } from "./kanban-reducer";
 import { operadores, operadorAtivo } from "@/lib/mock-data";
 import { Button } from "@/components/ui/Button";
@@ -24,7 +34,7 @@ interface CardDetailModalProps {
   onDelete?: (msg: string) => void;
 }
 
-type Tab = "detalhes" | "comentarios";
+type Tab = "dados" | "atividade";
 
 export default function CardDetailModal({
   pedido,
@@ -32,7 +42,7 @@ export default function CardDetailModal({
   dispatch,
   onDelete,
 }: CardDetailModalProps) {
-  const [tab, setTab] = useState<Tab>("detalhes");
+  const [tab, setTab] = useState<Tab>("dados");
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<Partial<Pedido>>({});
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -44,15 +54,16 @@ export default function CardDetailModal({
 
   // Auto-scroll to latest comment
   useEffect(() => {
-    if (tab === "comentarios") {
+    if (tab === "atividade") {
       commentEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [pedido?.comentarios?.length, tab]);
+  }, [pedido?.logs?.length, tab]);
 
   if (!pedido) return null;
 
   const currentIdx = COLUNA_ORDER.indexOf(pedido.status);
-  const comentarios = pedido.comentarios ?? [];
+  const logs = pedido.logs ?? [];
+  const isAtrasado = isPedidoAtrasado(pedido);
 
   const handleSave = () => {
     dispatch({ type: "UPDATE_ORDER", pedido: { id: pedido.id, ...form } });
@@ -80,8 +91,9 @@ export default function CardDetailModal({
     const now = new Date();
     const hora = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 
-    const comentario: Comentario = {
+    const comentario: LogKanban = {
       id: `C-${Date.now()}`,
+      tipo: "comentario",
       autor: operadorAtivo.nome,
       avatar: operadorAtivo.avatar,
       texto,
@@ -136,8 +148,8 @@ export default function CardDetailModal({
       {/* Tabs */}
       <div style={{ display: "flex", gap: 0, marginBottom: "1.25rem", borderBottom: "1px solid rgba(85,67,53,0.15)" }}>
         {([
-          { id: "detalhes", label: "Detalhes", icon: Settings2 },
-          { id: "comentarios", label: `Comentários${comentarios.length > 0 ? ` (${comentarios.length})` : ""}`, icon: MessageSquare },
+          { id: "dados", label: "Dados do Pedido", icon: Settings2 },
+          { id: "atividade", label: `Atividade e Comentários${logs.length > 0 ? ` (${logs.length})` : ""}`, icon: Activity },
         ] as { id: Tab; label: string; icon: React.ElementType }[]).map(({ id, label, icon: Icon }) => (
           <button
             key={id}
@@ -165,9 +177,32 @@ export default function CardDetailModal({
         ))}
       </div>
 
-      {/* ── TAB: DETALHES ── */}
-      {tab === "detalhes" && (
+      {/* ── TAB: DADOS ── */}
+      {tab === "dados" && (
         <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+          {pedido.dataVencimento && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "0.625rem 0.75rem",
+                background: isAtrasado ? "rgba(255,136,129,0.12)" : "rgba(255,184,119,0.08)",
+                border: `1px solid ${isAtrasado ? "rgba(255,136,129,0.25)" : "rgba(255,184,119,0.2)"}`,
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", color: isAtrasado ? "var(--tertiary)" : "var(--primary)" }}>
+                <AlertTriangle size={13} />
+                <span style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                  {isAtrasado ? "Pedido Atrasado" : "Prazo em dia"}
+                </span>
+              </div>
+              <span className="label-sm" style={{ fontSize: "0.625rem", opacity: 0.9 }}>
+                Vencimento: {new Date(pedido.dataVencimento).toLocaleDateString("pt-BR")}
+              </span>
+            </div>
+          )}
+
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
             <Field label="Modelo">
               {editing ? (
@@ -220,6 +255,61 @@ export default function CardDetailModal({
             </Field>
           </div>
 
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <Field label="Documento">
+              <Value>{pedido.documento ?? "---"}</Value>
+            </Field>
+
+            <Field label="E-mail">
+              <Value>{pedido.email ?? "---"}</Value>
+            </Field>
+
+            <Field label="Endereço" >
+              <Value>{pedido.endereco ?? "---"}</Value>
+            </Field>
+
+            <Field label="Número">
+              <Value>{pedido.numero ?? "---"}</Value>
+            </Field>
+
+            <Field label="Revisor">
+              <Value>{pedido.revisor ?? "Não definido"}</Value>
+            </Field>
+
+            <Field label="Garantia">
+              <Value>{pedido.tempoGarantia ?? "Não definida"}</Value>
+            </Field>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 128px", gap: "1rem", alignItems: "start" }}>
+            <Field label="Descrição do Produto">
+              <Value>{pedido.descricaoProduto ?? "Sem descrição detalhada."}</Value>
+            </Field>
+
+            <div>
+              <label className="input-label" style={{ marginBottom: "0.375rem" }}>
+                Foto
+              </label>
+              <div
+                style={{
+                  width: 128,
+                  height: 128,
+                  background: "var(--surface-container-low)",
+                  border: "1px solid rgba(85,67,53,0.2)",
+                  overflow: "hidden",
+                }}
+              >
+                <Image
+                  src={pedido.foto ?? "/assets/mock_holster.png"}
+                  alt={`Produto ${pedido.ref}`}
+                  width={128}
+                  height={128}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              </div>
+            </div>
+          </div>
+
           <Field label="Observações">
             {editing ? (
               <textarea className="input-field" value={form.observacoes ?? pedido.observacoes ?? ""} onChange={(e) => setForm({ ...form, observacoes: e.target.value })} rows={3} style={{ resize: "vertical" }} placeholder="Instruções especiais..." />
@@ -263,26 +353,26 @@ export default function CardDetailModal({
         </div>
       )}
 
-      {/* ── TAB: COMENTÁRIOS ── */}
-      {tab === "comentarios" && (
+      {/* ── TAB: ATIVIDADE E COMENTÁRIOS ── */}
+      {tab === "atividade" && (
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           {/* Comment list */}
           <div style={{ maxHeight: 320, overflowY: "auto", display: "flex", flexDirection: "column", gap: "0.625rem" }}>
-            {comentarios.length === 0 ? (
+            {logs.length === 0 ? (
               <div style={{ padding: "2.5rem 1rem", textAlign: "center" }}>
                 <MessageSquare size={28} color="var(--on-surface-variant)" style={{ margin: "0 auto 0.75rem", opacity: 0.25 }} />
-                <p className="label-sm" style={{ opacity: 0.35 }}>Nenhum comentário ainda.</p>
-                <p className="label-sm" style={{ opacity: 0.2, marginTop: "0.25rem" }}>Use a área abaixo para adicionar o primeiro.</p>
+                <p className="label-sm" style={{ opacity: 0.35 }}>Nenhuma atividade registrada ainda.</p>
+                <p className="label-sm" style={{ opacity: 0.2, marginTop: "0.25rem" }}>Use a área abaixo para adicionar o primeiro comentário.</p>
               </div>
             ) : (
-              comentarios.map((c) => (
+              logs.map((c) => (
                 <div key={c.id} style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start", animation: "fadeIn 0.2s ease" }}>
                   {/* Avatar */}
-                  <div style={{ width: 28, height: 28, background: "var(--surface-container-highest)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-headline)", fontSize: "0.5625rem", fontWeight: 700, color: "var(--primary)", flexShrink: 0 }}>
-                    {c.avatar}
+                  <div style={{ width: 28, height: 28, background: c.tipo === "sistema" ? "rgba(255,184,119,0.15)" : "var(--surface-container-highest)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-headline)", fontSize: "0.5625rem", fontWeight: 700, color: c.tipo === "sistema" ? "var(--primary)" : "var(--primary)", flexShrink: 0 }}>
+                    {c.tipo === "sistema" ? "SYS" : c.avatar}
                   </div>
                   {/* Bubble */}
-                  <div style={{ flex: 1, background: "var(--surface-container-low)", padding: "0.625rem 0.875rem" }}>
+                  <div style={{ flex: 1, background: c.tipo === "sistema" ? "rgba(255,184,119,0.07)" : "var(--surface-container-low)", padding: "0.625rem 0.875rem" }}>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.375rem" }}>
                       <span style={{ fontSize: "0.6875rem", fontWeight: 600, color: "var(--on-surface)" }}>{c.autor}</span>
                       <span className="label-sm" style={{ fontSize: "0.5625rem", opacity: 0.45 }}>{c.hora}</span>

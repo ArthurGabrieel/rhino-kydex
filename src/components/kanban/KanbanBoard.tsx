@@ -4,7 +4,12 @@ import { useReducer, useState, useMemo } from "react";
 import { Plus, Filter, X } from "lucide-react";
 import { pedidos as initialPedidos } from "@/lib/mock-data";
 import { kanbanReducer } from "./kanban-reducer";
-import { COLUNAS, Prioridade } from "./types";
+import {
+  COLUNAS,
+  Prioridade,
+  PRIORIDADE_ORDER,
+  isPedidoAtrasado,
+} from "./types";
 import KanbanColumn from "./KanbanColumn";
 import CardDetailModal from "./CardDetailModal";
 import NewOrderModal from "./NewOrderModal";
@@ -12,7 +17,7 @@ import { useToast } from "@/components/ui/Toast";
 import { Button } from "@/components/ui/Button";
 
 type FilterPrioridade = Prioridade | "todas";
-type FilterOperador = string | "todos";
+type FilterAtraso = "todos" | "atrasados" | "em_dia";
 
 export default function KanbanBoard() {
   const [state, dispatch] = useReducer(kanbanReducer, {
@@ -37,35 +42,36 @@ export default function KanbanBoard() {
 
   // Filter state
   const [filterPrioridade, setFilterPrioridade] = useState<FilterPrioridade>("todas");
-  const [filterOperador, setFilterOperador] = useState<FilterOperador>("todos");
+  const [filterAtraso, setFilterAtraso] = useState<FilterAtraso>("todos");
   const [showFilters, setShowFilters] = useState(false);
-
-  // Operators list from current pedidos
-  const operadoresAtivos = useMemo(() => {
-    const ops = new Set(
-      state.pedidos.map((p) => p.operador).filter(Boolean)
-    );
-    return Array.from(ops) as string[];
-  }, [state.pedidos]);
 
   // Filtered pedidos
   const pedidosFiltrados = useMemo(() => {
     return state.pedidos.filter((p) => {
+      const isAtrasado = isPedidoAtrasado(p);
+      const prioridadeEfetiva = isPedidoAtrasado(p) ? "alta" : p.prioridade;
       const matchPrioridade =
-        filterPrioridade === "todas" || p.prioridade === filterPrioridade;
-      const matchOperador =
-        filterOperador === "todos" ||
-        (filterOperador === "__nenhum__" ? !p.operador : p.operador === filterOperador);
-      return matchPrioridade && matchOperador;
+        filterPrioridade === "todas" || prioridadeEfetiva === filterPrioridade;
+      const matchAtraso =
+        filterAtraso === "todos" ||
+        (filterAtraso === "atrasados" ? isAtrasado : !isAtrasado);
+
+      return matchPrioridade && matchAtraso;
     });
-  }, [state.pedidos, filterPrioridade, filterOperador]);
+  }, [state.pedidos, filterPrioridade, filterAtraso]);
 
   const hasFilters =
-    filterPrioridade !== "todas" || filterOperador !== "todos";
+    filterPrioridade !== "todas" ||
+    filterAtraso !== "todos";
+
+  const totalAtrasados = useMemo(
+    () => pedidosFiltrados.filter((p) => isPedidoAtrasado(p)).length,
+    [pedidosFiltrados]
+  );
 
   const clearFilters = () => {
     setFilterPrioridade("todas");
-    setFilterOperador("todos");
+    setFilterAtraso("todos");
   };
 
   return (
@@ -90,6 +96,18 @@ export default function KanbanBoard() {
             >
               <h1 className="headline-md">Produção</h1>
               <span className="chip chip-active">Kanban Board</span>
+              {totalAtrasados > 0 && (
+                <span
+                  className="chip"
+                  style={{
+                    background: "rgba(255,136,129,0.14)",
+                    color: "var(--tertiary)",
+                    border: "1px solid rgba(255,136,129,0.22)",
+                  }}
+                >
+                  {totalAtrasados} ATRASADO{totalAtrasados !== 1 ? "S" : ""}
+                </span>
+              )}
               {hasFilters && (
                 <span
                   className="chip chip-warning"
@@ -194,44 +212,50 @@ export default function KanbanBoard() {
               ))}
             </div>
 
-            {/* Operador */}
+            {/* Atraso */}
             <div
               style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
             >
-              <span className="label-sm">Operador:</span>
-              {(["todos", "__nenhum__", ...operadoresAtivos] as const).map(
-                (op) => (
-                  <button
-                    key={op}
-                    onClick={() => setFilterOperador(op)}
-                    style={{
-                      padding: "0.25rem 0.625rem",
-                      background:
-                        filterOperador === op
-                          ? "var(--surface-container-high)"
-                          : "transparent",
-                      border: "none",
-                      cursor: "pointer",
-                      fontSize: "0.6875rem",
-                      fontWeight: 600,
-                      letterSpacing: "0.05em",
-                      textTransform: "uppercase",
-                      fontFamily: "var(--font-body)",
-                      color:
-                        filterOperador === op
-                          ? "var(--on-surface)"
-                          : "var(--on-surface-variant)",
-                      transition: "all 150ms ease",
-                    }}
-                  >
-                    {op === "todos"
-                      ? "Todos"
-                      : op === "__nenhum__"
-                      ? "Não atribuídos"
-                      : op}
-                  </button>
-                )
-              )}
+              <span className="label-sm">Atraso:</span>
+              {([
+                { key: "todos", label: "Todos" },
+                { key: "atrasados", label: "Atrasados" },
+                { key: "em_dia", label: "Em dia" },
+              ] as const).map((item) => (
+                <button
+                  key={item.key}
+                  onClick={() => setFilterAtraso(item.key)}
+                  style={{
+                    padding: "0.25rem 0.625rem",
+                    background:
+                      filterAtraso === item.key
+                        ? item.key === "atrasados"
+                          ? "rgba(255,136,129,0.2)"
+                          : item.key === "em_dia"
+                          ? "rgba(126,200,142,0.16)"
+                          : "var(--surface-container-high)"
+                        : "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    fontSize: "0.6875rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.05em",
+                    textTransform: "uppercase",
+                    fontFamily: "var(--font-body)",
+                    color:
+                      filterAtraso === item.key
+                        ? item.key === "atrasados"
+                          ? "var(--tertiary)"
+                          : item.key === "em_dia"
+                          ? "#7ec88e"
+                          : "var(--on-surface)"
+                        : "var(--on-surface-variant)",
+                    transition: "all 150ms ease",
+                  }}
+                >
+                  {item.label}
+                </button>
+              ))}
             </div>
 
             {hasFilters && (
@@ -272,9 +296,26 @@ export default function KanbanBoard() {
           }}
         >
           {COLUNAS.map((coluna) => {
-            const colPedidos = pedidosFiltrados.filter(
-              (p) => p.status === coluna.id
-            );
+            const colPedidos = pedidosFiltrados
+              .filter((p) => p.status === coluna.id)
+              .sort((a, b) => {
+                const aAtrasado = isPedidoAtrasado(a);
+                const bAtrasado = isPedidoAtrasado(b);
+
+                if (aAtrasado !== bAtrasado) {
+                  return aAtrasado ? -1 : 1;
+                }
+
+                const aPrioridade = aAtrasado ? "alta" : a.prioridade;
+                const bPrioridade = bAtrasado ? "alta" : b.prioridade;
+
+                if (PRIORIDADE_ORDER[aPrioridade] !== PRIORIDADE_ORDER[bPrioridade]) {
+                  return PRIORIDADE_ORDER[aPrioridade] - PRIORIDADE_ORDER[bPrioridade];
+                }
+
+                return a.ref.localeCompare(b.ref);
+              });
+
             return (
               <KanbanColumn
                 key={coluna.id}

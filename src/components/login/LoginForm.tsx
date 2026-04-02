@@ -3,11 +3,11 @@
 import { Eye, EyeOff, Lock, User } from "lucide-react";
 
 interface Props {
-  usuario: string;
+  email: string;
   senha: string;
   showPass: boolean;
   loading: boolean;
-  onUsuario: (v: string) => void;
+  onEmail: (v: string) => void;
   onSenha: (v: string) => void;
   onTogglePass: () => void;
   onSubmit: (e: React.FormEvent) => void;
@@ -15,17 +15,17 @@ interface Props {
 }
 
 /**
- * Formulário de credenciais — campos de ID e senha com validação visual.
+ * Formulário de credenciais — campos de e-mail e senha com validação visual.
  */
 export function LoginForm({
-  usuario, senha, showPass, loading,
-  onUsuario, onSenha, onTogglePass, onSubmit, onRecover,
+  email, senha, showPass, loading,
+  onEmail, onSenha, onTogglePass, onSubmit, onRecover,
 }: Props) {
   return (
     <form onSubmit={onSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-      {/* ID do operador */}
+      {/* E-mail */}
       <div>
-        <label htmlFor="usuario" className="input-label">ID do Operador</label>
+        <label htmlFor="email" className="input-label">E-mail Corporativo</label>
         <div style={{ position: "relative" }}>
           <User
             size={15}
@@ -36,14 +36,14 @@ export function LoginForm({
             }}
           />
           <input
-            id="usuario"
-            type="text"
+            id="email"
+            type="email"
             className="input-field"
-            placeholder="operador_id"
-            value={usuario}
-            onChange={(e) => onUsuario(e.target.value)}
+            placeholder="operador@rhino.com"
+            value={email}
+            onChange={(e) => onEmail(e.target.value)}
             style={{ paddingLeft: "2.5rem" }}
-            autoComplete="username"
+            autoComplete="email"
           />
         </div>
       </div>

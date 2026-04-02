@@ -6,6 +6,45 @@ import { AlertTriangle } from "lucide-react";
 import { LoginHero } from "@/components/login/LoginHero";
 import { LoginForm } from "@/components/login/LoginForm";
 import { RecuperarCredenciais } from "@/components/login/RecuperarCredenciais";
+import { useSession } from "@/components/auth/SessionProvider";
+
+function getMockProfileFromEmail(email: string) {
+  const normalized = email.trim().toLowerCase();
+  const localPart = normalized.split("@")[0] ?? normalized;
+
+  if (
+    localPart.includes("ger") ||
+    localPart.includes("gerente") ||
+    localPart.includes("ric")
+  ) {
+    return {
+      nome: "Ricardo",
+      avatar: "RF",
+      nivel: "Pleno",
+      role: "Gerente" as const,
+    };
+  }
+
+  if (
+    localPart.includes("col") ||
+    localPart.includes("colab") ||
+    localPart.includes("mar")
+  ) {
+    return {
+      nome: "Marcos",
+      avatar: "MO",
+      nivel: "Júnior",
+      role: "Colaborador" as const,
+    };
+  }
+
+  return {
+    nome: "Jorge",
+    avatar: "JM",
+    nivel: "Sênior",
+    role: "Administrador" as const,
+  };
+}
 
 /**
  * Orquestrador da tela de login.
@@ -13,15 +52,28 @@ import { RecuperarCredenciais } from "@/components/login/RecuperarCredenciais";
  */
 export function LoginBoard() {
   const router = useRouter();
+  const { setUser } = useSession();
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [credentials, setCredentials] = useState({ usuario: "", senha: "" });
+  const [credentials, setCredentials] = useState({ email: "", senha: "" });
   const [recovering, setRecovering] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     await new Promise((res) => setTimeout(res, 1200));
+
+    const profile = getMockProfileFromEmail(credentials.email);
+    const email = credentials.email.trim() || `${profile.nome.toLowerCase()}@rhino.com`;
+
+    setUser({
+      email,
+      nome: profile.nome,
+      avatar: profile.avatar,
+      nivel: profile.nivel,
+      role: profile.role,
+    });
+
     router.push("/dashboard");
   };
 
@@ -65,15 +117,19 @@ export function LoginBoard() {
               </h2>
 
               <p className="label-sm" style={{ marginBottom: "2.5rem" }}>
-                Identificação do Operador
+                Acesso com E-mail Corporativo
+              </p>
+
+              <p className="label-sm" style={{ marginBottom: "1rem", opacity: 0.55 }}>
+                Demo: admin@rhino.com, gerente@rhino.com, colaborador@rhino.com
               </p>
 
               <LoginForm
-                usuario={credentials.usuario}
+                email={credentials.email}
                 senha={credentials.senha}
                 showPass={showPass}
                 loading={loading}
-                onUsuario={(v) => setCredentials((p) => ({ ...p, usuario: v }))}
+                onEmail={(v) => setCredentials((p) => ({ ...p, email: v }))}
                 onSenha={(v) => setCredentials((p) => ({ ...p, senha: v }))}
                 onTogglePass={() => setShowPass((p) => !p)}
                 onSubmit={handleLogin}

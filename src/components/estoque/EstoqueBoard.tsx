@@ -73,6 +73,11 @@ export default function EstoqueBoard({ isReadOnly = false }: { isReadOnly?: bool
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.375rem" }}>
               <h1 className="headline-md">Estoque</h1>
               <span className="chip chip-active">OPERATIONAL</span>
+              {isReadOnly && (
+                <span className="chip" style={{ background: "rgba(255,184,119,0.12)", color: "var(--primary)" }}>
+                  SOMENTE LEITURA
+                </span>
+              )}
               {totalCriticos > 0 && (
                 <span className="chip" style={{ background: "rgba(255,136,129,0.12)", color: "var(--tertiary)", border: "1px solid rgba(255,136,129,0.2)" }}>
                   {totalCriticos} CRÍTICO{totalCriticos !== 1 ? "S" : ""}
@@ -87,6 +92,7 @@ export default function EstoqueBoard({ isReadOnly = false }: { isReadOnly?: bool
             <p className="label-sm">
               Gerenciamento de Estoque ·{" "}
               <strong style={{ color: "var(--on-surface)" }}>{state.itens.length}</strong> itens ·{" "}
+              {isReadOnly && <span style={{ color: "var(--primary)", opacity: 0.95 }}>acesso sem edição · </span>}
               {totalCriticos > 0 && <span style={{ color: "var(--tertiary)" }}>{totalCriticos} crítico{totalCriticos !== 1 ? "s" : ""} · </span>}
               <span style={{ opacity: 0.5 }}>{totalAlerta} em atenção</span>
             </p>
@@ -224,12 +230,14 @@ export default function EstoqueBoard({ isReadOnly = false }: { isReadOnly?: bool
       </div>
 
       {/* Modals */}
-      <AddItemModal
-        open={addOpen}
-        onClose={() => setAddOpen(false)}
-        dispatch={dispatch}
-        onSuccess={(nome: string) => showToast(`Item "${nome}" cadastrado com sucesso.`, "success")}
-      />
+      {!isReadOnly && (
+        <AddItemModal
+          open={addOpen}
+          onClose={() => setAddOpen(false)}
+          dispatch={dispatch}
+          onSuccess={(nome: string) => showToast(`Item "${nome}" cadastrado com sucesso.`, "success")}
+        />
+      )}
 
       <ItemDetailModal
         key={selectedItem?.id ?? "empty"}

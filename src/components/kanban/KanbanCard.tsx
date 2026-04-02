@@ -1,8 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Clock, User, Crosshair, ChevronLeft, ChevronRight, MessageSquare } from "lucide-react";
-import { Pedido, COLUNA_ORDER } from "./types";
+import {
+  Clock,
+  User,
+  Crosshair,
+  ChevronLeft,
+  ChevronRight,
+  MessageSquare,
+  AlertTriangle,
+} from "lucide-react";
+import { Pedido, COLUNA_ORDER, isPedidoAtrasado } from "./types";
 import { KanbanAction } from "./kanban-reducer";
 
 interface KanbanCardProps {
@@ -34,9 +42,16 @@ export default function KanbanCard({
   const currentIdx = COLUNA_ORDER.indexOf(pedido.status);
   const canPrev = currentIdx > 0;
   const canNext = currentIdx < COLUNA_ORDER.length - 1;
-  const commentCount = pedido.comentarios?.length ?? 0;
+  const commentCount = (pedido.logs ?? []).filter((log) => log.tipo === "comentario").length;
+  const isAtrasado = isPedidoAtrasado(pedido);
 
-  const p = PRIORIDADE_STYLE[pedido.prioridade];
+  const p = isAtrasado
+    ? {
+        bg: "rgba(255,136,129,0.2)",
+        color: "var(--tertiary)",
+        label: "ATRASADO",
+      }
+    : PRIORIDADE_STYLE[pedido.prioridade];
 
   const dragging = isDragging || isDraggingLocal;
 
@@ -135,6 +150,24 @@ export default function KanbanCard({
         <Crosshair size={9} />
         {pedido.cliente}
       </div>
+
+      {pedido.dataVencimento && (
+        <div
+          style={{
+            marginTop: "0.2rem",
+            fontSize: "0.5625rem",
+            color: isAtrasado ? "var(--tertiary)" : "var(--on-surface-variant)",
+            opacity: isAtrasado ? 0.95 : 0.55,
+            display: "flex",
+            alignItems: "center",
+            gap: "0.25rem",
+            letterSpacing: "0.03em",
+          }}
+        >
+          <AlertTriangle size={9} />
+          Vence em {new Date(pedido.dataVencimento).toLocaleDateString("pt-BR")}
+        </div>
+      )}
 
       {/* Hover action bar — prev / next only (click abriu modal) */}
       {isHovered && !dragging && (

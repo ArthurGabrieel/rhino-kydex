@@ -32,28 +32,28 @@ function StepDots({ current }: { current: Step }) {
   );
 }
 
-// ─── Step 1 — Informar ID ────────────────────────────────────
-function StepId({ onNext }: { onNext: (id: string) => void }) {
-  const [id, setId] = useState("");
+// ─── Step 1 — Informar e-mail ────────────────────────────────
+function StepId({ onNext }: { onNext: (email: string) => void }) {
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!id.trim()) return;
+    if (!email.trim()) return;
     setLoading(true);
     await new Promise((r) => setTimeout(r, 1000));
-    onNext(id.trim());
+    onNext(email.trim().toLowerCase());
   };
 
   return (
     <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
       <div>
         <p style={{ fontSize: "0.875rem", color: "var(--on-surface-variant)", lineHeight: 1.6, marginBottom: "1.5rem" }}>
-          Informe seu ID de operador. Se ele estiver cadastrado no sistema,
+          Informe seu e-mail corporativo. Se ele estiver cadastrado no sistema,
           um código de verificação será gerado pelo administrador.
         </p>
 
-        <label htmlFor="recover-id" className="input-label">ID do Operador</label>
+        <label htmlFor="recover-email" className="input-label">E-mail Corporativo</label>
         <div style={{ position: "relative" }}>
           <Shield size={15} style={{
             position: "absolute", left: "0.875rem", top: "50%",
@@ -61,14 +61,14 @@ function StepId({ onNext }: { onNext: (id: string) => void }) {
             color: "var(--on-surface-variant)", opacity: 0.5,
           }} />
           <input
-            id="recover-id"
-            type="text"
+            id="recover-email"
+            type="email"
             className="input-field"
-            placeholder="operador_id"
-            value={id}
-            onChange={(e) => setId(e.target.value)}
+            placeholder="operador@rhino.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             style={{ paddingLeft: "2.5rem" }}
-            autoComplete="off"
+            autoComplete="email"
           />
         </div>
       </div>
@@ -76,11 +76,11 @@ function StepId({ onNext }: { onNext: (id: string) => void }) {
       <button
         type="submit"
         className="btn-primary"
-        disabled={loading || !id.trim()}
+        disabled={loading || !email.trim()}
         style={{
           width: "100%", justifyContent: "center",
-          opacity: loading || !id.trim() ? 0.6 : 1,
-          cursor: loading || !id.trim() ? "not-allowed" : "pointer",
+          opacity: loading || !email.trim() ? 0.6 : 1,
+          cursor: loading || !email.trim() ? "not-allowed" : "pointer",
         }}
       >
         {loading ? (
@@ -101,7 +101,7 @@ function StepId({ onNext }: { onNext: (id: string) => void }) {
 }
 
 // ─── Step 2 — Código de verificação ──────────────────────────
-function StepCode({ operadorId, onNext }: { operadorId: string; onNext: () => void }) {
+function StepCode({ email, onNext }: { email: string; onNext: () => void }) {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -138,9 +138,9 @@ function StepCode({ operadorId, onNext }: { operadorId: string; onNext: () => vo
           color: "var(--on-surface-variant)",
           lineHeight: 1.5,
         }}>
-          Código enviado para o administrador do sistema relativo ao ID{" "}
+          Código enviado para o administrador do sistema relativo ao e-mail{" "}
           <strong style={{ color: "var(--on-surface)", fontFamily: "monospace" }}>
-            {operadorId}
+            {email}
           </strong>.
           Solicite o código de 6 dígitos ao responsável.
         </div>
@@ -284,7 +284,7 @@ function StepSuccess({ onBack }: { onBack: () => void }) {
 // ─── Orquestrador ─────────────────────────────────────────────
 export function RecuperarCredenciais({ onBack }: Props) {
   const [step, setStep] = useState<Step>("id");
-  const [operadorId, setOperadorId] = useState("");
+  const [email, setEmail] = useState("");
 
   return (
     <div
@@ -328,10 +328,10 @@ export function RecuperarCredenciais({ onBack }: Props) {
       {/* Step content com transição */}
       <div key={step} style={{ animation: "revealUp 300ms ease-out both" }}>
         {step === "id" && (
-          <StepId onNext={(id) => { setOperadorId(id); setStep("code"); }} />
+          <StepId onNext={(nextEmail) => { setEmail(nextEmail); setStep("code"); }} />
         )}
         {step === "code" && (
-          <StepCode operadorId={operadorId} onNext={() => setStep("success")} />
+          <StepCode email={email} onNext={() => setStep("success")} />
         )}
         {step === "success" && (
           <StepSuccess onBack={onBack} />

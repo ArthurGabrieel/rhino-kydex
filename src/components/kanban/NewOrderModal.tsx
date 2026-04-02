@@ -65,6 +65,12 @@ function getNextMockOrderId() {
   return id;
 }
 
+function getFutureDate(daysAhead: number) {
+  const date = new Date();
+  date.setDate(date.getDate() + daysAhead);
+  return date.toISOString().slice(0, 10);
+}
+
 export default function NewOrderModal({
   open,
   onClose,
@@ -93,6 +99,12 @@ export default function NewOrderModal({
     const now = new Date();
     const hora = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
     const id = getNextMockOrderId();
+    const emailBase = form.cliente
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, ".")
+      .replace(/^\.|\.$/g, "");
 
     const novoPedido: Pedido = {
       id,
@@ -105,7 +117,25 @@ export default function NewOrderModal({
       status: form.status,
       hora,
       operador: form.operador || undefined,
+      revisor: "Inspetora Camila",
+      tempoGarantia: "12 meses",
+      endereco: "Rua Tática Central",
+      numero: String(100 + mockOrderSequence),
+      email: `${emailBase || "cliente"}@example.com`,
+      documento: `CPF ${String(10000000000 + mockOrderSequence).replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")}`,
+      descricaoProduto: `${form.modelo} para ${form.arma}, acabamento ${form.cor}.`,
+      foto: "/assets/mock_holster.png",
+      dataVencimento: getFutureDate(form.prioridade === "alta" ? 2 : form.prioridade === "media" ? 4 : 6),
       observacoes: form.observacoes.trim() || undefined,
+      logs: [
+        {
+          id: `SYS-INIT-${id}`,
+          tipo: "sistema",
+          autor: "Sistema",
+          texto: "Pedido criado no Kanban",
+          hora,
+        },
+      ],
     };
 
     dispatch({ type: "ADD_ORDER", pedido: novoPedido });

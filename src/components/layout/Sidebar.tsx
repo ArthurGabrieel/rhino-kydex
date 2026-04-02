@@ -10,7 +10,7 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
-import { operadorAtivo } from "@/lib/mock-data";
+import { useSession } from "@/components/auth/SessionProvider";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -21,6 +21,7 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { user, logout } = useSession();
 
   return (
     <aside className="sidebar">
@@ -135,7 +136,7 @@ export default function Sidebar() {
               flexShrink: 0,
             }}
           >
-            {operadorAtivo.avatar}
+            {user.avatar}
           </div>
           <div>
             <div
@@ -146,18 +147,18 @@ export default function Sidebar() {
                 lineHeight: 1.2,
               }}
             >
-              {operadorAtivo.nome}
+              {user.nome}
             </div>
             <div
               className="label-sm"
               style={{ marginTop: 2, letterSpacing: "0.06em" }}
             >
-              {operadorAtivo.nivel}
+              {user.nivel} · {user.role}
             </div>
           </div>
         </div>
 
-        <Link href="/login">
+        <Link href="/login" onClick={logout}>
           <button
             className="btn-secondary"
             style={{

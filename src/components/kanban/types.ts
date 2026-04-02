@@ -8,11 +8,13 @@ export type KanbanStatus =
   | "expedicao";
 
 export type Prioridade = "alta" | "media" | "normal";
+export type LogKanbanTipo = "comentario" | "sistema";
 
-export interface Comentario {
+export interface LogKanban {
   id: string;
+  tipo: LogKanbanTipo;
   autor: string;
-  avatar: string;
+  avatar?: string;
   texto: string;
   hora: string;
 }
@@ -28,8 +30,17 @@ export interface Pedido {
   status: KanbanStatus;
   hora: string;
   operador?: string;
+  revisor?: string;
+  tempoGarantia?: string;
+  endereco?: string;
+  numero?: string;
+  email?: string;
+  documento?: string;
+  descricaoProduto?: string;
+  foto?: string;
+  dataVencimento?: string;
   observacoes?: string;
-  comentarios?: Comentario[];
+  logs?: LogKanban[];
 }
 
 export interface Coluna {
@@ -47,3 +58,22 @@ export const COLUNAS: Coluna[] = [
 ];
 
 export const COLUNA_ORDER = COLUNAS.map((c) => c.id);
+
+export const PRIORIDADE_ORDER: Record<Prioridade, number> = {
+  alta: 0,
+  media: 1,
+  normal: 2,
+};
+
+export function isPedidoAtrasado(pedido: Pick<Pedido, "dataVencimento" | "status">, now = new Date()) {
+  if (!pedido.dataVencimento) return false;
+  if (pedido.status === "expedicao") return false;
+
+  const hoje = new Date(now);
+  hoje.setHours(0, 0, 0, 0);
+
+  const vencimento = new Date(pedido.dataVencimento);
+  vencimento.setHours(0, 0, 0, 0);
+
+  return vencimento < hoje;
+}
