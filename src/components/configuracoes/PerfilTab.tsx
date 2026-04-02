@@ -4,13 +4,33 @@ import { useState } from "react";
 import { User, KeyRound, Save, ShieldCheck } from "lucide-react";
 import { Button } from "../ui/Button";
 import { useToast } from "../ui/Toast";
+import { useSession } from "@/components/auth/SessionProvider";
+
+function splitNomeCompleto(nomeCompleto: string) {
+  const trimmed = nomeCompleto.trim();
+  if (!trimmed) {
+    return { nome: "", sobrenome: "" };
+  }
+
+  const parts = trimmed.split(/\s+/);
+  if (parts.length === 1) {
+    return { nome: parts[0], sobrenome: "" };
+  }
+
+  return {
+    nome: parts[0],
+    sobrenome: parts.slice(1).join(" "),
+  };
+}
 
 export function PerfilTab() {
   const { showToast } = useToast();
+  const { user, setUser } = useSession();
 
-  const [nome, setNome] = useState("Arthur");
-  const [sobrenome, setSobrenome] = useState("Gabriel");
-  const [email] = useState("arthur@rhinocam.com.br"); // read-only mocked
+  const initialName = splitNomeCompleto(user.nome);
+
+  const [nome, setNome] = useState(initialName.nome);
+  const [sobrenome, setSobrenome] = useState(initialName.sobrenome);
   const [senhaAtual, setSenhaAtual] = useState("");
   const [novaSenha, setNovaSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
@@ -20,6 +40,12 @@ export function PerfilTab() {
       showToast("Nome e sobrenome são obrigatórios.", "error");
       return;
     }
+
+    setUser({
+      ...user,
+      nome: `${nome.trim()} ${sobrenome.trim()}`,
+    });
+
     showToast("Perfil atualizado com sucesso.", "success");
   };
 
@@ -68,7 +94,7 @@ export function PerfilTab() {
             <input
               type="email"
               className="input-field"
-              value={email}
+              value={user.email}
               disabled
               style={{ background: "var(--surface-container-lowest)", cursor: "not-allowed", opacity: 0.7 }}
             />

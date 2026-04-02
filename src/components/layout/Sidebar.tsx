@@ -22,6 +22,9 @@ const navItems = [
 export default function Sidebar() {
   const pathname = usePathname();
   const { user, logout } = useSession();
+  const visibleNavItems = navItems.filter(
+    (item) => !(user.role === "Colaborador" && item.href === "/dashboard")
+  );
 
   return (
     <aside className="sidebar">
@@ -85,7 +88,7 @@ export default function Sidebar() {
 
       {/* Nav */}
       <nav style={{ flex: 1, padding: "0.5rem 0" }}>
-        {navItems.map((item) => {
+        {visibleNavItems.map((item) => {
           const Icon = item.icon;
           const isActive =
             item.href === "/dashboard"

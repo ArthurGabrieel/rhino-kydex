@@ -21,4 +21,4 @@ export interface AlertaConfig {
   sobreAviso: number; // % acima do mínimo que já avisa
 }
 
-export type ConfigTab = "perfil" | "operadores" | "alertas" | "sistema";
+export type ConfigTab = "perfil" | "operadores" | "alertas" | "auditoria";

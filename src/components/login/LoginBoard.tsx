@@ -74,7 +74,8 @@ export function LoginBoard() {
       role: profile.role,
     });
 
-    router.push("/dashboard");
+    const landingPage = profile.role === "Colaborador" ? "/producao" : "/dashboard";
+    router.push(landingPage);
   };
 
   return (
