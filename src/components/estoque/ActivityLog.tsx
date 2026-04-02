@@ -73,6 +73,14 @@ export default function ActivityLog({ entries: initialEntries }: ActivityLogProp
           Log de Atividades
         </h2>
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          {isPolling && (
+            <span
+              className="label-sm"
+              style={{ fontSize: "0.5625rem", color: "var(--primary)", opacity: 0.85 }}
+            >
+              SYNC
+            </span>
+          )}
           <div
             title="Live Data Connection"
             className="live-dot"

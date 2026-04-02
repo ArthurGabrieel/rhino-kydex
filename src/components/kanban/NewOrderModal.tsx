@@ -57,6 +57,14 @@ const EMPTY_FORM = {
   observacoes: "",
 };
 
+let mockOrderSequence = 2404;
+
+function getNextMockOrderId() {
+  const id = `P-${String(mockOrderSequence).padStart(4, "0")}`;
+  mockOrderSequence += 1;
+  return id;
+}
+
 export default function NewOrderModal({
   open,
   onClose,
@@ -84,7 +92,7 @@ export default function NewOrderModal({
 
     const now = new Date();
     const hora = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
-    const id = `P-${Date.now().toString().slice(-4)}`;
+    const id = getNextMockOrderId();
 
     const novoPedido: Pedido = {
       id,

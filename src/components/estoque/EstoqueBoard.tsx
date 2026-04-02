@@ -4,7 +4,7 @@ import { useReducer, useState, useMemo } from "react";
 import { Search, AlertTriangle, CheckCircle, TrendingDown, Package, Plus, X } from "lucide-react";
 import { estoque as initialEstoque, logAtividades as initialLog } from "@/lib/mock-data";
 import { estoqueReducer } from "./estoque-reducer";
-import { FiltroStatus, FiltroCategoria, CATEGORIA_LABEL, ItemEstoque } from "./types";
+import { FiltroStatus, FiltroCategoria, CATEGORIA_LABEL } from "./types";
 import EstoqueRow from "./EstoqueRow";
 import ActivityLog from "./ActivityLog";
 import AddItemModal from "./AddItemModal";
@@ -198,7 +198,6 @@ export default function EstoqueBoard({ isReadOnly = false }: { isReadOnly?: bool
                     <EstoqueRow
                       key={item.id}
                       item={item}
-                      dispatch={dispatch}
                       onClick={(i) => setSelectedId(i.id)}
                     />
                   ))}
@@ -233,6 +232,7 @@ export default function EstoqueBoard({ isReadOnly = false }: { isReadOnly?: bool
       />
 
       <ItemDetailModal
+        key={selectedItem?.id ?? "empty"}
         item={selectedItem}
         onClose={() => setSelectedId(null)}
         dispatch={dispatch}

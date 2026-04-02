@@ -3,14 +3,14 @@
 import { useState } from "react";
 import { TrendingUp, Target, Activity, AlertTriangle, ArrowUpRight, Clock, Download, Loader2 } from "lucide-react";
 import { kpis, dados7d, dados30d, dados90d, dadosYtd } from "@/lib/mock-data";
-import { KpiCard, FadeSection } from "./primitives";
+import { KpiCard } from "./primitives";
 import Modal from "@/components/ui/Modal";
 import { useToast } from "@/components/ui/Toast";
 import { Button } from "@/components/ui/Button";
 import { AlertasBanner } from "./AlertasBanner";
 import { ProductionCharts } from "./ProductionCharts";
 import { DistribuicaoBarChart } from "./DistribuicaoBarChart";
-import { DATE_RANGES, RANGE_LABEL } from "./types";
+import { DATE_RANGES } from "./types";
 import type { RangeKey } from "./types";
 
 const RANGE_DATA: Record<RangeKey, typeof dados7d> = {

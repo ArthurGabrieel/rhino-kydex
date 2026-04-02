@@ -2,11 +2,9 @@
 
 import { AlertTriangle, CheckCircle, TrendingDown } from "lucide-react";
 import { ItemEstoque } from "./types";
-import { EstoqueAction } from "./estoque-reducer";
 
 interface EstoqueRowProps {
   item: ItemEstoque;
-  dispatch: React.Dispatch<EstoqueAction>;
   onClick: (item: ItemEstoque) => void;
 }
 
@@ -22,7 +20,7 @@ const CATEGORIA_LABEL: Record<string, string> = {
   produto_final: "Produto Final",
 };
 
-export default function EstoqueRow({ item, dispatch, onClick }: EstoqueRowProps) {
+export default function EstoqueRow({ item, onClick }: EstoqueRowProps) {
   const st = STATUS_CONFIG[item.status];
   const { Icon } = st;
   const pct = Math.min(100, Math.round((item.quantidade / item.minimo) * 100));

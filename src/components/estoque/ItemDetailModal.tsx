@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
-  Edit2, Trash2, Save, Plus, Minus, Package,
+  Edit2, Trash2, Save, Plus, Minus,
   AlertTriangle, CheckCircle, TrendingDown,
 } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
+import { useToast } from "@/components/ui/Toast";
 import {
   ItemEstoque,
   CategoriaEstoque,
@@ -30,25 +31,19 @@ const STATUS_CONFIG = {
 } as const;
 
 type Tab = "info" | "ajuste";
+type PreviewTarget = "saida" | "entrada" | null;
 
 export default function ItemDetailModal({ item, onClose, dispatch, isReadOnly }: ItemDetailModalProps) {
   const [tab, setTab] = useState<Tab>("info");
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<Partial<ItemEstoque>>({});
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [previewTarget, setPreviewTarget] = useState<PreviewTarget>(null);
+  const { showToast } = useToast();
 
   // Ajuste de quantidade
   const [delta, setDelta] = useState(0);
   const [motivo, setMotivo] = useState("");
-
-  useEffect(() => {
-    setTab("info");
-    setEditing(false);
-    setForm({});
-    setConfirmDelete(false);
-    setDelta(0);
-    setMotivo("");
-  }, [item?.id]);
 
   if (!item) return null;
 
@@ -68,12 +63,26 @@ export default function ItemDetailModal({ item, onClose, dispatch, isReadOnly }:
 
   const handleAdjust = (sign: 1 | -1) => {
     if (delta <= 0) return;
-    dispatch({ type: "ADJUST_QTY", id: item.id, delta: sign * delta, motivo });
+    const ajuste = sign * delta;
+    const novaQuantidade = Math.max(0, item.quantidade + ajuste);
+
+    dispatch({ type: "ADJUST_QTY", id: item.id, delta: ajuste, motivo });
+    showToast(
+      `Estoque atualizado: ${item.ref} agora com ${novaQuantidade} ${item.unidade}.`,
+      "success"
+    );
+
     setDelta(0);
     setMotivo("");
+    onClose();
   };
 
-  const novaQtd = Math.max(0, item.quantidade + delta);
+  const qtdSaidaPreview = Math.max(0, item.quantidade - delta);
+  const qtdEntradaPreview = item.quantidade + delta;
+  const saidaInvalida = delta > item.quantidade;
+
+  const getQtdPreviewColor = (qtd: number) =>
+    qtd < item.minimo ? "var(--tertiary)" : "#7ec88e";
 
   return (
     <Modal
@@ -283,19 +292,51 @@ export default function ItemDetailModal({ item, onClose, dispatch, isReadOnly }:
             <div style={{ fontSize: "0.625rem", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--on-surface-variant)", marginBottom: "0.75rem" }}>
               Preview da operação
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", fontWeight: 700, color: "var(--on-surface-variant)", opacity: 0.5 }}>{item.quantidade}</div>
-                <div style={{ fontSize: "0.5625rem", opacity: 0.4 }}>Atual</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.875rem" }}>
+              <div style={{ background: "var(--surface-container-lowest)", padding: "0.75rem", textAlign: "center" }}>
+                <div style={{ fontFamily: "var(--font-headline)", fontSize: "1.375rem", fontWeight: 700, color: "var(--on-surface-variant)", opacity: 0.7 }}>
+                  {item.quantidade}
+                </div>
+                <div style={{ fontSize: "0.5625rem", opacity: 0.45 }}>Atual</div>
               </div>
-              <div style={{ fontSize: "1.25rem", color: "var(--on-surface-variant)", opacity: 0.3 }}>→</div>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ fontFamily: "var(--font-headline)", fontSize: "1.5rem", fontWeight: 700, color: novaQtd < item.minimo ? "var(--tertiary)" : "#7ec88e" }}>{novaQtd}</div>
-                <div style={{ fontSize: "0.5625rem", opacity: 0.4 }}>Novo total</div>
+
+              <div
+                style={{
+                  background: previewTarget === "saida" ? "rgba(255,136,129,0.12)" : "var(--surface-container-lowest)",
+                  border: previewTarget === "saida" ? "1px solid rgba(255,136,129,0.35)" : "1px solid transparent",
+                  padding: "0.75rem",
+                  textAlign: "center",
+                  transition: "all 150ms ease",
+                }}
+              >
+                <div style={{ fontFamily: "var(--font-headline)", fontSize: "1.375rem", fontWeight: 700, color: getQtdPreviewColor(qtdSaidaPreview), opacity: saidaInvalida ? 0.45 : 1 }}>
+                  {qtdSaidaPreview}
+                </div>
+                <div style={{ fontSize: "0.5625rem", opacity: 0.45 }}>Após saída</div>
               </div>
-              <div style={{ textAlign: "center", marginLeft: "auto" }}>
-                <div style={{ fontSize: "0.6875rem", fontWeight: 600, color: "var(--on-surface-variant)" }}>Mín: {item.minimo}</div>
-                <div style={{ fontSize: "0.5625rem", opacity: 0.4 }}>{item.unidade}</div>
+
+              <div
+                style={{
+                  background: previewTarget === "entrada" ? "rgba(255,184,119,0.12)" : "var(--surface-container-lowest)",
+                  border: previewTarget === "entrada" ? "1px solid rgba(255,184,119,0.35)" : "1px solid transparent",
+                  padding: "0.75rem",
+                  textAlign: "center",
+                  transition: "all 150ms ease",
+                }}
+              >
+                <div style={{ fontFamily: "var(--font-headline)", fontSize: "1.375rem", fontWeight: 700, color: getQtdPreviewColor(qtdEntradaPreview) }}>
+                  {qtdEntradaPreview}
+                </div>
+                <div style={{ fontSize: "0.5625rem", opacity: 0.45 }}>Após entrada</div>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "0.625rem" }}>
+              <div style={{ fontSize: "0.625rem", color: saidaInvalida ? "var(--tertiary)" : "var(--on-surface-variant)", opacity: 0.8 }}>
+                {saidaInvalida ? "Saída maior que o estoque atual." : ""}
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <div style={{ fontSize: "0.6875rem", fontWeight: 600, color: "var(--on-surface-variant)" }}>Mín: {item.minimo} {item.unidade}</div>
               </div>
             </div>
           </div>
@@ -306,6 +347,10 @@ export default function ItemDetailModal({ item, onClose, dispatch, isReadOnly }:
               variant="secondary"
               disabled={delta <= 0 || item.quantidade - delta < 0}
               onClick={() => handleAdjust(-1)}
+              onMouseEnter={() => setPreviewTarget("saida")}
+              onMouseLeave={() => setPreviewTarget(null)}
+              onFocus={() => setPreviewTarget("saida")}
+              onBlur={() => setPreviewTarget(null)}
               style={{ padding: "0.625rem", fontSize: "0.6875rem", gap: "0.375rem", justifyContent: "center", display: "flex", alignItems: "center", opacity: delta <= 0 ? 0.4 : 1, cursor: delta <= 0 ? "not-allowed" : "pointer", color: "var(--tertiary)" }}
             >
               <Minus size={13} />
@@ -316,6 +361,10 @@ export default function ItemDetailModal({ item, onClose, dispatch, isReadOnly }:
               variant="primary"
               disabled={delta <= 0}
               onClick={() => handleAdjust(1)}
+              onMouseEnter={() => setPreviewTarget("entrada")}
+              onMouseLeave={() => setPreviewTarget(null)}
+              onFocus={() => setPreviewTarget("entrada")}
+              onBlur={() => setPreviewTarget(null)}
               style={{ padding: "0.625rem", fontSize: "0.6875rem", gap: "0.375rem", justifyContent: "center", display: "flex", alignItems: "center", opacity: delta <= 0 ? 0.5 : 1, cursor: delta <= 0 ? "not-allowed" : "pointer" }}
             >
               <Plus size={13} />

@@ -1,10 +1,31 @@
 "use client";
 
 import { useState } from "react";
-import { X, ShieldAlert, KeyRound, Check, LayoutGrid, Box, Factory, BarChart } from "lucide-react";
+import { X, ShieldAlert, KeyRound, LayoutGrid, Box, Factory, BarChart } from "lucide-react";
 import { Button } from "../ui/Button";
 import { useToast } from "../ui/Toast";
 import type { OperadorConfig } from "./types";
+
+type ModalTab = "dados" | "acesso";
+
+const TAB_OPTIONS: Array<{ id: ModalTab; label: string }> = [
+  { id: "dados", label: "Informações Cadastrais" },
+  { id: "acesso", label: "Acesso e Segurança" },
+];
+
+const NIVEL_OPTIONS: OperadorConfig["nivel"][] = ["Júnior", "Pleno", "Sênior"];
+
+const ROLE_OPTIONS: Array<{ id: OperadorConfig["role"]; desc: string }> = [
+  { id: "Administrador", desc: "Acesso total, incluindo configurações vitais e billing." },
+  { id: "Gerente", desc: "Gestão operacional e relatórios agregados." },
+  { id: "Colaborador", desc: "Acesso restrito apenas para execução de tarefas." },
+];
+
+const MODULOS_POR_ROLE: Record<OperadorConfig["role"], string[]> = {
+  Administrador: ["Dashboard", "Estoque", "Produção", "Kanban"],
+  Gerente: ["Dashboard", "EstoqueReadOnly", "Produção", "Kanban", "Relatórios"],
+  Colaborador: ["Produção", "Kanban", "EstoqueReadOnly"],
+};
 
 export function OperadorModal({
   operador, // If undefined, it's creation mode
@@ -15,7 +36,7 @@ export function OperadorModal({
   onClose: () => void;
   onSave: (op: Omit<OperadorConfig, "id" | "avatar"> | OperadorConfig) => void;
 }) {
-  const [activeTab, setActiveTab] = useState<"dados" | "acesso">("dados");
+  const [activeTab, setActiveTab] = useState<ModalTab>("dados");
 
   // State
   const [nome, setNome] = useState(operador?.nome || "");
@@ -28,12 +49,6 @@ export function OperadorModal({
   
   const [role, setRole] = useState<OperadorConfig["role"]>(operador?.role || "Colaborador");
   const [ativo, setAtivo] = useState<boolean>(operador?.ativo ?? true);
-
-  const MODULOS_POR_ROLE: Record<string, string[]> = {
-    Administrador: ["Dashboard", "Estoque", "Produção", "Kanban"],
-    Gerente: ["Dashboard", "EstoqueReadOnly", "Produção", "Kanban", "Relatórios"],
-    Colaborador: ["Produção", "Kanban", "EstoqueReadOnly"],
-  };
 
   const modulosDerivados = MODULOS_POR_ROLE[role] || [];
 
@@ -159,13 +174,10 @@ export function OperadorModal({
           background: "var(--surface-container-lowest)",
           padding: "0 1.5rem"
         }}>
-          {[
-            { id: "dados", label: "Informações Cadastrais" },
-            { id: "acesso", label: "Acesso e Segurança" }
-          ].map(tab => (
+          {TAB_OPTIONS.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id)}
               style={{
                 background: "transparent",
                 border: "none",
@@ -257,10 +269,10 @@ export function OperadorModal({
               <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                 <label className="label-sm">NÍVEL / SENIORIDADE</label>
                 <div style={{ display: "flex", gap: "0.5rem" }}>
-                  {["Júnior", "Pleno", "Sênior"].map(nv => (
+                  {NIVEL_OPTIONS.map((nv) => (
                     <button
                       key={nv}
-                      onClick={() => setNivel(nv as any)}
+                      onClick={() => setNivel(nv)}
                       style={{
                         flex: 1,
                         padding: "0.625rem",
@@ -287,14 +299,10 @@ export function OperadorModal({
               <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                 <label className="label-sm">PERFIL DE ACESSO (ROLE)</label>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "0.5rem" }}>
-                  {[
-                    { id: "Administrador", desc: "Acesso total, incluindo configurações vitais e billing." },
-                    { id: "Gerente", desc: "Gestão operacional e relatórios agregados." },
-                    { id: "Colaborador", desc: "Acesso restrito apenas para execução de tarefas." }
-                  ].map(r => (
+                  {ROLE_OPTIONS.map((r) => (
                     <div 
                       key={r.id} 
-                      onClick={() => setRole(r.id as any)}
+                      onClick={() => setRole(r.id)}
                       style={{
                         padding: "1rem",
                         background: role === r.id ? "rgba(247,146,31,0.08)" : "var(--surface-container-lowest)",

@@ -4,7 +4,7 @@ import { useReducer, useState, useMemo } from "react";
 import { Plus, Filter, X } from "lucide-react";
 import { pedidos as initialPedidos } from "@/lib/mock-data";
 import { kanbanReducer } from "./kanban-reducer";
-import { COLUNAS, KanbanStatus, Prioridade } from "./types";
+import { COLUNAS, Prioridade } from "./types";
 import KanbanColumn from "./KanbanColumn";
 import CardDetailModal from "./CardDetailModal";
 import NewOrderModal from "./NewOrderModal";
@@ -359,6 +359,7 @@ export default function KanbanBoard() {
 
       {/* Modals */}
       <CardDetailModal
+        key={selectedPedido?.id ?? "empty"}
         pedido={selectedPedido}
         onClose={() => setSelectedId(null)}
         dispatch={dispatch}

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import {
-  Building2, Users, Bell, Activity, User
+  Users, Bell, Activity, User
 } from "lucide-react";
 import type { ConfigTab } from "./types";
 import { PerfilTab } from "./PerfilTab";

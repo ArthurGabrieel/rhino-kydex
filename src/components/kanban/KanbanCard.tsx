@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Clock, User, Crosshair, ChevronLeft, ChevronRight, MessageSquare } from "lucide-react";
 import { Pedido, COLUNA_ORDER } from "./types";
 import { KanbanAction } from "./kanban-reducer";
@@ -29,8 +29,7 @@ export default function KanbanCard({
   onDragEnd,
 }: KanbanCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  // Local drag flag — self-heals if parent prop gets stuck
-  const isDraggingLocal = useRef(false);
+  const [isDraggingLocal, setIsDraggingLocal] = useState(false);
 
   const currentIdx = COLUNA_ORDER.indexOf(pedido.status);
   const canPrev = currentIdx > 0;
@@ -39,21 +38,20 @@ export default function KanbanCard({
 
   const p = PRIORIDADE_STYLE[pedido.prioridade];
 
-  // Use local ref as source of truth — not the prop (prop can lag after drop)
-  const dragging = isDragging || isDraggingLocal.current;
+  const dragging = isDragging || isDraggingLocal;
 
   const handleDragStart = () => {
-    isDraggingLocal.current = true;
+    setIsDraggingLocal(true);
     onDragStart();
   };
 
   const handleDragEnd = () => {
-    isDraggingLocal.current = false;
+    setIsDraggingLocal(false);
     onDragEnd();
   };
 
   const handleCardClick = () => {
-    if (!isDraggingLocal.current) onOpenDetail(pedido);
+    if (!isDraggingLocal) onOpenDetail(pedido);
   };
 
   return (

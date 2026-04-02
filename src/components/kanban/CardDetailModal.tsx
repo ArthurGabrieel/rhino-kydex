@@ -49,15 +49,6 @@ export default function CardDetailModal({
     }
   }, [pedido?.comentarios?.length, tab]);
 
-  // Reset state when modal opens on a new card
-  useEffect(() => {
-    setTab("detalhes");
-    setEditing(false);
-    setForm({});
-    setConfirmDelete(false);
-    setCommentText("");
-  }, [pedido?.id]);
-
   if (!pedido) return null;
 
   const currentIdx = COLUNA_ORDER.indexOf(pedido.status);
