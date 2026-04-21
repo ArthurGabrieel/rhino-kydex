@@ -11,9 +11,9 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 // ─── Chart series config ──────────────────────────────────────
 const SERIES = [
-  { label: "Capacidade F.",    color: "var(--surface-border)", dataKey: "capacidade", gradId: "gCap",       stopColor: "#a38d7b", opacity: 0.1 },
-  { label: "Demanda (Rec.)",   color: "var(--on-surface-variant)", dataKey: "recebidos", gradId: "gRecebidos", stopColor: "#c7c6c6", opacity: 0.2 },
-  { label: "Produzido (Exp.)", color: "var(--primary)",        dataKey: "expedidos",  gradId: "gExpedidos", stopColor: "#f7921f", opacity: 0.35 },
+  { label: "Capacidade Máxima",    color: "var(--surface-border)", dataKey: "capacidade", gradId: "gCap",       stopColor: "#a38d7b", opacity: 0.1 },
+  { label: "Pedidos Recebidos",   color: "var(--on-surface-variant)", dataKey: "recebidos", gradId: "gRecebidos", stopColor: "#c7c6c6", opacity: 0.2 },
+  { label: "Pedidos Entregues", color: "var(--primary)",        dataKey: "expedidos",  gradId: "gExpedidos", stopColor: "#f7921f", opacity: 0.35 },
 ];
 
 interface Props {
@@ -30,8 +30,8 @@ export function ProductionCharts({ range, chartData }: Props) {
       <div className="card" style={{ padding: "1.5rem", height: "100%" }}>
         <div className="production-chart-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", gap: "0.75rem", flexWrap: isMobile ? "wrap" : undefined }}>
           <div>
-            <h2 className="title-md" style={{ marginBottom: "0.25rem" }}>Lead Flow (Sobrecarga)</h2>
-            <p className="label-sm">{RANGE_LABEL[range]} · Backlog vs Entrega</p>
+            <h2 className="title-md" style={{ marginBottom: "0.25rem" }}>Desempenho da Produção</h2>
+            <p className="label-sm">{RANGE_LABEL[range]} · Recebidos vs Entregas</p>
           </div>
           <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
             {SERIES.map((s) => (

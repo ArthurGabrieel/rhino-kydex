@@ -22,13 +22,13 @@ export function DistribuicaoBarChart({ range, chartData }: Props) {
       <div className="card" style={{ padding: "1.5rem" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", gap: "0.75rem", flexWrap: isMobile ? "wrap" : undefined }}>
           <div>
-            <h2 className="title-md" style={{ marginBottom: "0.25rem" }}>OEE & Gargalos Setoriais (SLA)</h2>
-            <p className="label-sm">Tempo médio de ciclo (horas) vs Meta máxima permitida</p>
+            <h2 className="title-md" style={{ marginBottom: "0.25rem" }}>Tempo Médio das Etapas</h2>
+            <p className="label-sm">Comparativo de tempo real por fase vs tempo esperado</p>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <Zap size={12} color="var(--tertiary)" />
             <span className="label-sm" style={{ color: "var(--tertiary)", fontSize: "0.625rem", fontWeight: 600 }}>
-              ACABAMENTO EM ALERTA
+              ALERTA DE ATRASO
             </span>
           </div>
         </div>
@@ -64,7 +64,7 @@ export function DistribuicaoBarChart({ range, chartData }: Props) {
                 />
               ))}
             </Bar>
-            <Bar dataKey="meta" name="Target SLA (Horas)" fill="var(--surface-border)" barSize={4} />
+            <Bar dataKey="meta" name="Tempo Esperado (Horas)" fill="var(--surface-border)" barSize={4} />
           </BarChart>
         </ResponsiveContainer>
       </div>

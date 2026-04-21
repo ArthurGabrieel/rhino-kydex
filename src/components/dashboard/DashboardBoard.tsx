@@ -11,7 +11,6 @@ import { AlertasBanner } from "./AlertasBanner";
 import { ProductionCharts } from "./ProductionCharts";
 import { RankingPanel } from "./RankingPanel";
 import { DistribuicaoBarChart } from "./DistribuicaoBarChart";
-import { ProductHighlightCard } from "./ProductHighlightCard";
 import { DATE_RANGES } from "./types";
 import type { RangeKey } from "./types";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -120,9 +119,8 @@ export function DashboardBoard() {
             <DistribuicaoBarChart chartData={slaData} />
           </div>
 
-          {/* Right Column: Produto e Pessoas (Wow factor + Gamification) */}
+          {/* Right Column: Pessoas (Ranking) */}
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", minWidth: 0 }}>
-            <ProductHighlightCard />
             <RankingPanel />
           </div>
 
