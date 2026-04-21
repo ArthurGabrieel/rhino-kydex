@@ -2,7 +2,7 @@
 
 import { useReducer, useState, useMemo } from "react";
 import { Plus, Filter, X } from "lucide-react";
-import { pedidos as initialPedidos } from "@/lib/mock-data";
+import { pedidos as initialPedidos, operadores } from "@/lib/mock-data";
 import { kanbanReducer } from "./kanban-reducer";
 import {
   COLUNAS,
@@ -49,6 +49,7 @@ export default function KanbanBoard() {
   // Filter state
   const [filterPrioridade, setFilterPrioridade] = useState<FilterPrioridade>("todas");
   const [filterAtraso, setFilterAtraso] = useState<FilterAtraso>("todos");
+  const [filterVendedor, setFilterVendedor] = useState<string>("todos");
   const [showFilters, setShowFilters] = useState(false);
   const [mobileColuna, setMobileColuna] = useState<KanbanStatus>("aberto");
 
@@ -62,14 +63,17 @@ export default function KanbanBoard() {
       const matchAtraso =
         filterAtraso === "todos" ||
         (filterAtraso === "atrasados" ? isAtrasado : !isAtrasado);
+      const matchVendedor =
+        filterVendedor === "todos" || p.operador === filterVendedor;
 
-      return matchPrioridade && matchAtraso;
+      return matchPrioridade && matchAtraso && matchVendedor;
     });
-  }, [state.pedidos, filterPrioridade, filterAtraso]);
+  }, [state.pedidos, filterPrioridade, filterAtraso, filterVendedor]);
 
   const hasFilters =
     filterPrioridade !== "todas" ||
-    filterAtraso !== "todos";
+    filterAtraso !== "todos" ||
+    filterVendedor !== "todos";
 
   const totalAtrasados = useMemo(
     () => pedidosFiltrados.filter((p) => isPedidoAtrasado(p)).length,
@@ -89,6 +93,7 @@ export default function KanbanBoard() {
   const clearFilters = () => {
     setFilterPrioridade("todas");
     setFilterAtraso("todos");
+    setFilterVendedor("todos");
   };
 
   return (
@@ -274,6 +279,36 @@ export default function KanbanBoard() {
                   {item.label}
                 </button>
               ))}
+            </div>
+
+            {/* Vendedor */}
+            <div
+              style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+            >
+              <span className="label-sm">Vendedor:</span>
+              <select
+                value={filterVendedor}
+                onChange={(e) => setFilterVendedor(e.target.value)}
+                style={{
+                  padding: "0.25rem 0.625rem",
+                  background: filterVendedor !== "todos" ? "rgba(247,146,31,0.15)" : "var(--surface-container-high)",
+                  color: filterVendedor !== "todos" ? "var(--primary)" : "var(--on-surface-variant)",
+                  border: "none",
+                  outline: "none",
+                  cursor: "pointer",
+                  fontSize: "0.6875rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.05em",
+                  textTransform: "uppercase",
+                  fontFamily: "var(--font-body)",
+                  borderRadius: "2px",
+                }}
+              >
+                <option value="todos">Todos</option>
+                {operadores.map(op => (
+                  <option key={op.id} value={op.nome}>{op.nome}</option>
+                ))}
+              </select>
             </div>
 
             {hasFilters && (

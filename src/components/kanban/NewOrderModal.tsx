@@ -55,6 +55,7 @@ const EMPTY_FORM = {
   prioridade: "normal" as Prioridade,
   status: "aberto" as KanbanStatus,
   operador: "",
+  valor: "",
   observacoes: "",
 };
 
@@ -119,6 +120,7 @@ export default function NewOrderModal({
       status: form.status,
       hora,
       operador: form.operador || undefined,
+      valor: form.valor ? parseFloat(form.valor) : undefined,
       revisor: "Inspetora Camila",
       tempoGarantia: "12 meses",
       endereco: "Rua Tática Central",
@@ -227,7 +229,7 @@ export default function NewOrderModal({
             </select>
           </FormField>
 
-          <FormField label="Operador responsável" colSpan={2} isMobile={isMobile}>
+          <FormField label="Operador responsável">
             <select
               className="input-field"
               value={form.operador}
@@ -241,6 +243,18 @@ export default function NewOrderModal({
                 </option>
               ))}
             </select>
+          </FormField>
+
+          <FormField label="Valor (R$)">
+            <input
+              className="input-field"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="0,00"
+              value={form.valor}
+              onChange={(e) => setForm({ ...form, valor: e.target.value })}
+            />
           </FormField>
 
           <FormField label="Observações" colSpan={2} isMobile={isMobile}>

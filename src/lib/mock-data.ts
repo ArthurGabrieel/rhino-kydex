@@ -71,14 +71,14 @@ export const kpis = {
 
 export const metasPorPessoa = [
   {
-    operadorId: 1,        // JU — Jucimar
+    operadorId: 1, // JU — Jucimar
     nome: "Jucimar",
     sigla: "JU",
     avatar: "JU",
     nivel: "Sênior",
     // Metas
-    metaMensal: 120,      // coldres/mês
-    metaDiaria: 6,        // coldres/dia (120 ÷ 20)
+    metaMensal: 120, // coldres/mês
+    metaDiaria: 6, // coldres/dia (120 ÷ 20)
     // Realizado fev/2026
     realizadoMes: 82,
     realizadoHoje: 5,
@@ -89,7 +89,7 @@ export const metasPorPessoa = [
     tendenciaSemana: [5, 6, 7, 4, 6, 5, 0],
   },
   {
-    operadorId: 2,        // GUI — Guilherme
+    operadorId: 2, // GUI — Guilherme
     nome: "Guilherme",
     sigla: "GUI",
     avatar: "GU",
@@ -103,7 +103,7 @@ export const metasPorPessoa = [
     tendenciaSemana: [4, 5, 3, 5, 4, 4, 0],
   },
   {
-    operadorId: 3,        // BIA — Bianca
+    operadorId: 3, // BIA — Bianca
     nome: "Bianca",
     sigla: "BIA",
     avatar: "BI",
@@ -117,7 +117,7 @@ export const metasPorPessoa = [
     tendenciaSemana: [3, 4, 4, 3, 3, 4, 0],
   },
   {
-    operadorId: 4,        // PA — Paloma
+    operadorId: 4, // PA — Paloma
     nome: "Paloma",
     sigla: "PA",
     avatar: "PA",
@@ -134,12 +134,12 @@ export const metasPorPessoa = [
 
 // Meta da equipe toda (soma das metas individuais = 360 total, meta mensal = 280 coldres)
 export const metasEquipe = {
-  metaMensal: 280,        // meta total do mês
-  metaDiaria: 18,         // meta total/dia (approx. 280 ÷ 20 dias – arredondado para operação)
-  realizadoMes: 251,      // soma real: 82 + 71 + 60 + 38
-  realizadoHoje: 14,      // coldres já produzidos hoje (soma dos operadores)
-  receitaMes: 166656,     // real da planilha
-  receitaHoje: 10276,     // estimativa do dia atual
+  metaMensal: 280, // meta total do mês
+  metaDiaria: 18, // meta total/dia (approx. 280 ÷ 20 dias – arredondado para operação)
+  realizadoMes: 251, // soma real: 82 + 71 + 60 + 38
+  realizadoHoje: 14, // coldres já produzidos hoje (soma dos operadores)
+  receitaMes: 166656, // real da planilha
+  receitaHoje: 10276, // estimativa do dia atual
   // Comparativo por dia da última semana (equipe completa)
   tendenciaSemana: [
     { label: "Seg", realizado: 14, meta: 18 },
@@ -152,56 +152,67 @@ export const metasEquipe = {
   ],
 };
 
-// === TENDÊNCIAS DE PRODUÇÃO — baseadas nos dados reais de fev/2026 ===
-// Distribuição semanal real: ~59 pedidos/semana em fev/2026
-
-// 7D → últimos 7 dias (estimativa baseada no ritmo real)
-export const dados7d = [
-  { label: "Seg", moldagem: 6, acabamento: 5, expedicao: 4 },
-  { label: "Ter", moldagem: 9, acabamento: 7, expedicao: 6 },
-  { label: "Qua", moldagem: 8, acabamento: 8, expedicao: 7 },
-  { label: "Qui", moldagem: 11, acabamento: 9, expedicao: 8 },
-  { label: "Sex", moldagem: 12, acabamento: 10, expedicao: 9 },
-  { label: "Sáb", moldagem: 5, acabamento: 6, expedicao: 4 },
-  { label: "Dom", moldagem: 2, acabamento: 3, expedicao: 2 },
+// === LEAD FLOW (Demanda vs. Produzido vs. Capacidade) ===
+// 7D → últimos 7 dias
+export const leadFlow7d = [
+  { label: "Seg", recebidos: 12, expedidos: 10, capacidade: 15 },
+  { label: "Ter", recebidos: 18, expedidos: 15, capacidade: 18 },
+  { label: "Qua", recebidos: 14, expedidos: 16, capacidade: 18 },
+  { label: "Qui", recebidos: 22, expedidos: 18, capacidade: 20 },
+  { label: "Sex", recebidos: 20, expedidos: 19, capacidade: 20 },
+  { label: "Sáb", recebidos: 10, expedidos: 12, capacidade: 15 },
+  { label: "Dom", recebidos: 5, expedidos: 4, capacidade: 10 },
 ];
 
-// 30D → semanal (fevereiro 2026 real: 236 pedidos em 4 semanas)
-export const dados30d = [
-  { label: "Sem 01", moldagem: 52, acabamento: 45, expedicao: 38 },
-  { label: "Sem 02", moldagem: 61, acabamento: 55, expedicao: 48 },
-  { label: "Sem 03", moldagem: 68, acabamento: 62, expedicao: 54 },
-  { label: "Sem 04", moldagem: 74, acabamento: 69, expedicao: 61 },
+// 30D → semanal
+export const leadFlow30d = [
+  { label: "Sem 01", recebidos: 58, expedidos: 52, capacidade: 60 },
+  { label: "Sem 02", recebidos: 65, expedidos: 58, capacidade: 65 },
+  { label: "Sem 03", recebidos: 72, expedidos: 60, capacidade: 65 }, // Gargalo
+  { label: "Sem 04", recebidos: 81, expedidos: 68, capacidade: 70 }, // Gargalo
 ];
 
-// 90D → quinzenal (jan-mar/2026)
-export const dados90d = [
-  { label: "Jan/1", moldagem: 42, acabamento: 38, expedicao: 32 },
-  { label: "Jan/2", moldagem: 49, acabamento: 44, expedicao: 38 },
-  { label: "Fev/1", moldagem: 56, acabamento: 50, expedicao: 44 },
-  { label: "Fev/2", moldagem: 65, acabamento: 59, expedicao: 52 },
-  { label: "Mar/1", moldagem: 71, acabamento: 65, expedicao: 58 },
-  { label: "Mar/2", moldagem: 78, acabamento: 72, expedicao: 65 },
+// 90D → quinzenal
+export const leadFlow90d = [
+  { label: "Jan/1", recebidos: 110, expedidos: 105, capacidade: 120 },
+  { label: "Jan/2", recebidos: 115, expedidos: 112, capacidade: 120 },
+  { label: "Fev/1", recebidos: 123, expedidos: 110, capacidade: 125 },
+  { label: "Fev/2", recebidos: 153, expedidos: 128, capacidade: 135 }, // Gargalo
+  { label: "Mar/1", recebidos: 160, expedidos: 140, capacidade: 145 }, // Gargalo
+  { label: "Mar/2", recebidos: 165, expedidos: 152, capacidade: 150 },
 ];
 
 // YTD → mensal
-export const dadosYtd = [
-  { label: "Jan", moldagem: 185, acabamento: 168, expedicao: 152 },
-  { label: "Fev", moldagem: 236, acabamento: 218, expedicao: 198 },
-  { label: "Mar", moldagem: 248, acabamento: 229, expedicao: 211 },
-  { label: "Abr", moldagem: 241, acabamento: 223, expedicao: 205 },
-  { label: "Mai", moldagem: 262, acabamento: 244, expedicao: 226 },
-  { label: "Jun", moldagem: 275, acabamento: 258, expedicao: 239 },
-  { label: "Jul", moldagem: 289, acabamento: 271, expedicao: 252 },
-  { label: "Ago", moldagem: 281, acabamento: 264, expedicao: 245 },
-  { label: "Set", moldagem: 298, acabamento: 280, expedicao: 261 },
-  { label: "Out", moldagem: 315, acabamento: 297, expedicao: 278 },
-  { label: "Nov", moldagem: 308, acabamento: 290, expedicao: 271 },
-  { label: "Dez", moldagem: 328, acabamento: 309, expedicao: 290 },
+export const leadFlowYtd = [
+  { label: "Jan", recebidos: 225, expedidos: 217, capacidade: 240 },
+  { label: "Fev", recebidos: 276, expedidos: 238, capacidade: 260 }, // Gargalo
+  { label: "Mar", recebidos: 325, expedidos: 292, capacidade: 295 }, // Gargalo
+  { label: "Abr", recebidos: 310, expedidos: 300, capacidade: 320 },
+  { label: "Mai", recebidos: 335, expedidos: 320, capacidade: 340 },
+  { label: "Jun", recebidos: 350, expedidos: 345, capacidade: 360 },
+  { label: "Jul", recebidos: 365, expedidos: 358, capacidade: 380 },
+  { label: "Ago", recebidos: 355, expedidos: 340, capacidade: 380 },
+  { label: "Set", recebidos: 380, expedidos: 375, capacidade: 400 },
+  { label: "Out", recebidos: 405, expedidos: 390, capacidade: 420 },
+  { label: "Nov", recebidos: 395, expedidos: 385, capacidade: 420 },
+  { label: "Dez", recebidos: 420, expedidos: 410, capacidade: 440 },
 ];
 
-// Compat: mantido para imports existentes
-export const vendasSemanais = dados30d.map((d) => ({ semana: d.label, ...d }));
+// === SLA (Tempo de ciclo por fase produtivo) ===
+export const slaData = [
+  { label: "Preparação", tempoMedio: 2.1, meta: 3.0 },
+  { label: "Moldagem", tempoMedio: 4.5, meta: 5.0 },
+  { label: "Acabamento", tempoMedio: 14.8, meta: 8.0 }, // Gargalo Crítico!
+  { label: "Faturamento", tempoMedio: 1.2, meta: 2.0 },
+];
+
+// Compat: mantido para imports existentes (apenas tipagem antiga de vendas, que deixava a compilação feliz)
+export const vendasSemanais = leadFlow30d.map((d) => ({
+  semana: d.label,
+  moldagem: d.expedidos,
+  acabamento: d.expedidos,
+  expedido: d.expedidos,
+}));
 
 // === KANBAN — PEDIDOS REAIS (extraídos da planilha fev/2026) ===
 // Modelos reais: TRADICIONAL (79), COLDRE NEW (48), SLIM (36), TRAD.LANTERNA (20), RAPTOR.LANTERNA (13)
@@ -393,7 +404,7 @@ const pedidosBase: Pedido[] = [
     operador: OPERADOR_MAP["BIA"],
   },
 
-  // === EXPEDIÇÃO — embalado, aguardando coleta ===
+  // === FATURAMENTO — pronto, aguardando emissão NF-e no Bling ===
   {
     id: "P-0185",
     ref: "PED-185",
@@ -402,9 +413,10 @@ const pedidosBase: Pedido[] = [
     arma: "G2C",
     cor: "Preto Fosco",
     prioridade: "normal",
-    status: "expedicao",
-    hora: "Concluído 09:30",
+    status: "faturamento",
+    hora: "Pronto 09:30",
     operador: OPERADOR_MAP["BIA"],
+    nfEmitida: false,
   },
   {
     id: "P-0186",
@@ -414,10 +426,12 @@ const pedidosBase: Pedido[] = [
     arma: "CZ P10C",
     cor: "Preto Fosco",
     prioridade: "media",
-    status: "expedicao",
-    hora: "Concluído 10:15",
+    status: "faturamento",
+    hora: "Pronto 10:15",
     operador: OPERADOR_MAP["PALOMA"],
+    nfEmitida: false,
   },
+  // === EXPEDIDO — NF emitida, saiu para transportadora ===
   {
     id: "P-0187",
     ref: "PED-187",
@@ -426,9 +440,11 @@ const pedidosBase: Pedido[] = [
     arma: "G17",
     cor: "Flat Dark Earth",
     prioridade: "alta",
-    status: "expedicao",
-    hora: "Concluído 10:45",
+    status: "expedido",
+    hora: "Expedido 10:45",
     operador: OPERADOR_MAP["BIA"],
+    nfEmitida: true,
+    nfNumero: "NF-000341",
   },
 ];
 
@@ -443,23 +459,125 @@ const EXTRA_DATA: Record<
     policial: boolean;
   }
 > = {
-  "P-0241": { uf: "SP", tipoEntrega: "PAC",      pagamento: "PIX",     total: 739,    policial: false },
-  "P-0242": { uf: "SP", tipoEntrega: "PAC",      pagamento: "CREDITO", total: 1189,   policial: false },
-  "P-0243": { uf: "MG", tipoEntrega: "PAC",      pagamento: "CREDITO", total: 450,    policial: false },
-  "P-0244": { uf: "SP", tipoEntrega: "PAC",      pagamento: "CREDITO", total: 305,    policial: false },
-  "P-0228": { uf: "AM", tipoEntrega: "PAC",      pagamento: "CREDITO", total: 630,    policial: false },
-  "P-0229": { uf: "DF", tipoEntrega: "RETIRADA", pagamento: "PIX",     total: 270,    policial: false },
-  "P-0230": { uf: "SP", tipoEntrega: "PAC",      pagamento: "CREDITO", total: 379,    policial: false },
-  "P-0215": { uf: "DF", tipoEntrega: "RETIRADA", pagamento: "PIX",     total: 270,    policial: false },
-  "P-0216": { uf: "DF", tipoEntrega: "RETIRADA", pagamento: "CREDITO", total: 783,    policial: false },
-  "P-0217": { uf: "BA", tipoEntrega: "PAC",      pagamento: "PIX",     total: 379,    policial: false },
-  "P-0218": { uf: "RS", tipoEntrega: "PAC",      pagamento: "CREDITO", total: 479,    policial: false },
-  "P-0200": { uf: "GO", tipoEntrega: "PAC",      pagamento: "CREDITO", total: 1074,   policial: false },
-  "P-0201": { uf: "GO", tipoEntrega: "PAC",      pagamento: "CREDITO", total: 630,    policial: false },
-  "P-0202": { uf: "SP", tipoEntrega: "PAC",      pagamento: "PIX",     total: 879,    policial: false },
-  "P-0185": { uf: "DF", tipoEntrega: "PAC",      pagamento: "PIX",     total: 460,    policial: false },
-  "P-0186": { uf: "SP", tipoEntrega: "PAC",      pagamento: "CREDITO", total: 470,    policial: false },
-  "P-0187": { uf: "PA", tipoEntrega: "PAC",      pagamento: "CREDITO", total: 1029,   policial: false },
+  "P-0241": {
+    uf: "SP",
+    tipoEntrega: "PAC",
+    pagamento: "PIX",
+    total: 739,
+    policial: false,
+  },
+  "P-0242": {
+    uf: "SP",
+    tipoEntrega: "PAC",
+    pagamento: "CREDITO",
+    total: 1189,
+    policial: false,
+  },
+  "P-0243": {
+    uf: "MG",
+    tipoEntrega: "PAC",
+    pagamento: "CREDITO",
+    total: 450,
+    policial: false,
+  },
+  "P-0244": {
+    uf: "SP",
+    tipoEntrega: "PAC",
+    pagamento: "CREDITO",
+    total: 305,
+    policial: false,
+  },
+  "P-0228": {
+    uf: "AM",
+    tipoEntrega: "PAC",
+    pagamento: "CREDITO",
+    total: 630,
+    policial: false,
+  },
+  "P-0229": {
+    uf: "DF",
+    tipoEntrega: "RETIRADA",
+    pagamento: "PIX",
+    total: 270,
+    policial: false,
+  },
+  "P-0230": {
+    uf: "SP",
+    tipoEntrega: "PAC",
+    pagamento: "CREDITO",
+    total: 379,
+    policial: false,
+  },
+  "P-0215": {
+    uf: "DF",
+    tipoEntrega: "RETIRADA",
+    pagamento: "PIX",
+    total: 270,
+    policial: false,
+  },
+  "P-0216": {
+    uf: "DF",
+    tipoEntrega: "RETIRADA",
+    pagamento: "CREDITO",
+    total: 783,
+    policial: false,
+  },
+  "P-0217": {
+    uf: "BA",
+    tipoEntrega: "PAC",
+    pagamento: "PIX",
+    total: 379,
+    policial: false,
+  },
+  "P-0218": {
+    uf: "RS",
+    tipoEntrega: "PAC",
+    pagamento: "CREDITO",
+    total: 479,
+    policial: false,
+  },
+  "P-0200": {
+    uf: "GO",
+    tipoEntrega: "PAC",
+    pagamento: "CREDITO",
+    total: 1074,
+    policial: false,
+  },
+  "P-0201": {
+    uf: "GO",
+    tipoEntrega: "PAC",
+    pagamento: "CREDITO",
+    total: 630,
+    policial: false,
+  },
+  "P-0202": {
+    uf: "SP",
+    tipoEntrega: "PAC",
+    pagamento: "PIX",
+    total: 879,
+    policial: false,
+  },
+  "P-0185": {
+    uf: "DF",
+    tipoEntrega: "PAC",
+    pagamento: "PIX",
+    total: 460,
+    policial: false,
+  },
+  "P-0186": {
+    uf: "SP",
+    tipoEntrega: "PAC",
+    pagamento: "CREDITO",
+    total: 470,
+    policial: false,
+  },
+  "P-0187": {
+    uf: "PA",
+    tipoEntrega: "PAC",
+    pagamento: "CREDITO",
+    total: 1029,
+    policial: false,
+  },
 };
 
 function toMockEmail(name: string) {
@@ -473,11 +591,23 @@ function toMockEmail(name: string) {
 
 // Datas de entrega prevista escalonadas (pedidos mais antigos → mais urgentes)
 const VENCIMENTOS = [
-  "2026-02-28", "2026-03-02", "2026-03-05", "2026-03-07",
-  "2026-03-03", "2026-03-04", "2026-03-06",
-  "2026-02-25", "2026-02-26", "2026-02-27", "2026-02-28",
-  "2026-02-20", "2026-02-21", "2026-02-22",
-  "2026-02-10", "2026-02-12", "2026-02-14",
+  "2026-02-28",
+  "2026-03-02",
+  "2026-03-05",
+  "2026-03-07",
+  "2026-03-03",
+  "2026-03-04",
+  "2026-03-06",
+  "2026-02-25",
+  "2026-02-26",
+  "2026-02-27",
+  "2026-02-28",
+  "2026-02-20",
+  "2026-02-21",
+  "2026-02-22",
+  "2026-02-10",
+  "2026-02-12",
+  "2026-02-14",
 ];
 
 export const pedidos: Pedido[] = pedidosBase.map((pedido, index) => {
@@ -491,9 +621,14 @@ export const pedidos: Pedido[] = pedidosBase.map((pedido, index) => {
 
   const emailBase = toMockEmail(pedido.cliente);
   const numPedido = parseInt(pedido.id.replace("P-0", ""), 10);
+  const horaInicial =
+    pedido.hora.startsWith("Pronto") || pedido.hora.startsWith("Expedido")
+      ? "09:00"
+      : pedido.hora;
 
   return {
     ...pedido,
+    valor: extra.total,
     revisor: index % 2 === 0 ? "Ana Carla" : "Fernando",
     tempoGarantia: "12 meses",
     endereco: `${extra.tipoEntrega === "RETIRADA" ? "Loja Rhino – SIG QL 6 Lt 785 Lj 01" : `Rua dos Expedicionários, ${100 + numPedido}`}`,
@@ -509,7 +644,7 @@ export const pedidos: Pedido[] = pedidosBase.map((pedido, index) => {
         tipo: "sistema" as const,
         autor: "Sistema",
         texto: `Pedido ${pedido.ref} registrado. Valor: R$ ${extra.total.toLocaleString("pt-BR")}. Pagamento: ${extra.pagamento}.`,
-        hora: pedido.hora.startsWith("Concluído") ? "09:00" : pedido.hora,
+        hora: horaInicial,
       },
     ],
   };
@@ -668,37 +803,43 @@ export const logAtividades: LogEntry[] = [
     id: "1",
     hora: "10:45:00",
     tipo: "producao",
-    mensagem: "Pedido PED-187 (G17 Coldre NEW) concluído → Expedição. Op: Bianca.",
+    mensagem:
+      "Pedido PED-187 (G17 Coldre NEW) concluído → Expedição. Op: Bianca.",
   },
   {
     id: "2",
     hora: "10:20:18",
     tipo: "saida",
-    mensagem: "Coldre NEW G17 — 1 un. retirada do estoque D-01. Solicitado por: Bianca.",
+    mensagem:
+      "Coldre NEW G17 — 1 un. retirada do estoque D-01. Solicitado por: Bianca.",
   },
   {
     id: "3",
     hora: "10:15:00",
     tipo: "producao",
-    mensagem: "Pedido PED-186 (CZ P10C Coldre NEW) concluído → Expedição. Op: Paloma.",
+    mensagem:
+      "Pedido PED-186 (CZ P10C Coldre NEW) concluído → Expedição. Op: Paloma.",
   },
   {
     id: "4",
     hora: "09:55:42",
     tipo: "alerta",
-    mensagem: "Estoque crítico: Kydex Preto Fosco — apenas 14 folhas. Mínimo: 30.",
+    mensagem:
+      "Estoque crítico: Kydex Preto Fosco — apenas 14 folhas. Mínimo: 30.",
   },
   {
     id: "5",
     hora: "09:30:00",
     tipo: "producao",
-    mensagem: "Pedido PED-185 (G2C Tradicional) concluído → Expedição. Op: Bianca.",
+    mensagem:
+      "Pedido PED-185 (G2C Tradicional) concluído → Expedição. Op: Bianca.",
   },
   {
     id: "6",
     hora: "09:10:11",
     tipo: "entrada",
-    mensagem: "Entrada de 500 Clips Duplos Kydex. Fornecedor: TACTIC DISTRIBUIDORA.",
+    mensagem:
+      "Entrada de 500 Clips Duplos Kydex. Fornecedor: TACTIC DISTRIBUIDORA.",
   },
   {
     id: "7",
@@ -716,7 +857,8 @@ export const logAtividades: LogEntry[] = [
     id: "9",
     hora: "08:10:05",
     tipo: "producao",
-    mensagem: "Pedido PED-215 (G19 Tradicional) iniciado na moldagem por Jucimar.",
+    mensagem:
+      "Pedido PED-215 (G19 Tradicional) iniciado na moldagem por Jucimar.",
   },
   {
     id: "10",
@@ -728,13 +870,15 @@ export const logAtividades: LogEntry[] = [
     id: "11",
     hora: "07:45:30",
     tipo: "alerta",
-    mensagem: "Lanterna Rhino GM23 abaixo do mínimo — 8 unidades restantes (mín: 10).",
+    mensagem:
+      "Lanterna Rhino GM23 abaixo do mínimo — 8 unidades restantes (mín: 10).",
   },
   {
     id: "12",
     hora: "07:30:00",
     tipo: "entrada",
-    mensagem: "Lote de 2.000 Parafusos Chicago 1/4\" recebido. Fornecedor: FIX TÁTICO.",
+    mensagem:
+      'Lote de 2.000 Parafusos Chicago 1/4" recebido. Fornecedor: FIX TÁTICO.',
   },
 ];
 
@@ -743,19 +887,25 @@ export const alertas = [
   {
     id: 1,
     tipo: "critico",
-    mensagem: "KY-BLK-20 abaixo do mínimo — Reposição imediata (14 / mín 30)",
+    mensagem: "Kydex Preto Fosco esgotando",
+    subtexto: "Estoque: 14 fls. Mínimo técnico: 30.",
+    acao: "Gerar Pedido",
     ref: "KY-BLK-20",
   },
   {
     id: 2,
-    tipo: "alerta",
-    mensagem: "LUZ-GM23 próximo ao mínimo (8 / mín 10)",
-    ref: "LUZ-GM23",
+    tipo: "gargalo",
+    mensagem: "Gargalo Crítico no Acabamento",
+    subtexto: "OEE estourado: 14.8h. Target: 8.0h.",
+    acao: "Analisar",
+    ref: "15 Pedidos Atrasados",
   },
   {
     id: 3,
     tipo: "alerta",
-    mensagem: "HW-CLIP-DUPLO próximo ao mínimo (85 / mín 80)",
-    ref: "HW-CLIP-DUPLO",
+    mensagem: "Lanterna BALDR atrasada",
+    subtexto: "Tactic Ltda deveria ter entregue ontem.",
+    acao: "Cobrar",
+    ref: "LUZ-GM23",
   },
 ];

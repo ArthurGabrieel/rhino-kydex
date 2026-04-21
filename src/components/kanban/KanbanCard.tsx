@@ -121,12 +121,51 @@ export default function KanbanCard({
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "0.5rem", borderTop: "1px solid rgba(85,67,53,0.12)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
           {pedido.operador ? (
-            <>
-              <User size={10} color="var(--on-surface-variant)" />
-              <span className="label-sm" style={{ fontSize: "0.5625rem" }}>{pedido.operador}</span>
-            </>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.375rem",
+                background: "var(--surface-container-highest)",
+                padding: "0.125rem 0.375rem 0.125rem 0.125rem",
+                borderRadius: "1rem",
+                border: "1px solid rgba(85,67,53,0.15)",
+              }}
+              title={`Operador: ${pedido.operador}`}
+            >
+              <div
+                style={{
+                  width: 14,
+                  height: 14,
+                  background: "var(--primary)",
+                  color: "#000",
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "0.45rem",
+                  fontWeight: 800,
+                  fontFamily: "var(--font-headline)",
+                }}
+              >
+                {pedido.operador.substring(0, 2).toUpperCase()}
+              </div>
+              <span
+                style={{
+                  fontSize: "0.5rem",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                  color: "var(--on-surface)",
+                }}
+              >
+                {pedido.operador.split(" ")[0]}
+              </span>
+            </div>
           ) : (
-            <span className="label-sm" style={{ fontSize: "0.5rem", opacity: 0.35 }}>Não atribuído</span>
+            <span className="label-sm" style={{ fontSize: "0.5rem", opacity: 0.35 }}>
+              Não atribuído
+            </span>
           )}
         </div>
 

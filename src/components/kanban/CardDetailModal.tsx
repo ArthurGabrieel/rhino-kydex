@@ -12,9 +12,14 @@ import {
   Settings2,
   Activity,
   AlertTriangle,
+  Loader2,
+  FileText,
+  CheckCircle2,
+  Cloud,
 } from "lucide-react";
 import Image from "next/image";
 import Modal from "@/components/ui/Modal";
+import { useToast } from "@/components/ui/Toast";
 import {
   Pedido,
   COLUNAS,
@@ -48,6 +53,8 @@ export default function CardDetailModal({
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<Partial<Pedido>>({});
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [emittingNf, setEmittingNf] = useState(false);
+  const { showToast } = useToast();
 
   // Comments
   const [commentText, setCommentText] = useState("");
@@ -105,6 +112,21 @@ export default function CardDetailModal({
     dispatch({ type: "ADD_COMMENT", id: pedido.id, comentario });
     setCommentText("");
     textareaRef.current?.focus();
+  };
+
+  const handleEmitNf = () => {
+    if (!pedido.endereco || !pedido.documento) {
+      showToast("Endereço e CPF/CNPJ são obrigatórios para emissão de NF-e.", "error");
+      return;
+    }
+
+    setEmittingNf(true);
+    setTimeout(() => {
+      setEmittingNf(false);
+      const fakeNf = `NF-${String(Math.floor(Math.random() * 10000)).padStart(6, "0")}`;
+      dispatch({ type: "EMIT_NF", id: pedido.id, nfNumero: fakeNf });
+      showToast(`NF-e ${fakeNf} gerada com sucesso via Bling.`, "success");
+    }, 2000);
   };
 
   const handleCommentKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -258,6 +280,23 @@ export default function CardDetailModal({
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "1rem" }}>
+            <Field label="Valor (R$)">
+              {editing && !pedido.nfEmitida ? (
+                <input
+                  className="input-field"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={form.valor ?? pedido.valor ?? ""}
+                  onChange={(e) => setForm({ ...form, valor: parseFloat(e.target.value) })}
+                />
+              ) : (
+                <Value>
+                  {pedido.valor ? `R$ ${pedido.valor.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : "Não informado"}
+                </Value>
+              )}
+            </Field>
+
             <Field label="Documento">
               <Value>{pedido.documento ?? "---"}</Value>
             </Field>
@@ -320,6 +359,64 @@ export default function CardDetailModal({
               <Value>{pedido.observacoes ? pedido.observacoes : <span style={{ opacity: 0.35 }}>Nenhuma observação</span>}</Value>
             )}
           </Field>
+
+          {/* ── Integração Bling (Faturamento) ── */}
+          {(pedido.status === "faturamento" || pedido.status === "expedido") && (
+            <div style={{ marginTop: "0.5rem", padding: "1.25rem", background: "rgba(96, 165, 250, 0.05)", border: "1px solid rgba(96, 165, 250, 0.2)", borderRadius: "6px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.875rem" }}>
+                <Cloud size={16} color="#60a5fa" />
+                <h4 style={{ fontSize: "0.875rem", fontFamily: "var(--font-headline)", color: "var(--on-surface)", margin: 0 }}>
+                  Faturamento (Integração Bling)
+                </h4>
+              </div>
+
+              {!pedido.nfEmitida ? (
+                <div>
+                  <p style={{ fontSize: "0.75rem", color: "var(--on-surface-variant)", marginBottom: "1rem", lineHeight: 1.4 }}>
+                    Ao clicar em gerar, os dados serão enviados ao Bling para emissão da nota fiscal eletrônica. Certifique-se de que o documento e endereço do cliente estão preenchidos.
+                  </p>
+                  <Button
+                    variant="primary"
+                    onClick={handleEmitNf}
+                    disabled={emittingNf}
+                    style={{
+                      background: "#2563eb", /* Blue for Bling */
+                      color: "white",
+                      borderColor: "#1d4ed8",
+                      padding: "0.625rem 1rem",
+                      fontSize: "0.75rem",
+                      opacity: emittingNf ? 0.7 : 1,
+                      cursor: emittingNf ? "wait" : "pointer"
+                    }}
+                  >
+                    {emittingNf && <Loader2 size={14} className="animate-spin" style={{ marginRight: 6 }} />}
+                    ⚡ Gerar NF-e (Bling)
+                  </Button>
+                </div>
+              ) : (
+                <div style={{ display: "flex",flexDirection: isMobile ? "column" : "row", alignItems: isMobile ? "flex-start" : "center", justifyContent: "space-between", gap: "1rem" }}>
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "#10b981", marginBottom: "0.25rem" }}>
+                      <CheckCircle2 size={14} />
+                      <span style={{ fontSize: "0.75rem", fontWeight: 700 }}>Nota Fiscal Emitida</span>
+                    </div>
+                    <span style={{ fontSize: "0.875rem", fontFamily: "monospace", color: "var(--on-surface)", fontWeight: 600 }}>
+                      {pedido.nfNumero}
+                    </span>
+                  </div>
+                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                     <Button variant="secondary" style={{ fontSize: "0.6875rem", padding: "0.5rem 0.75rem", display: "flex", gap: "4px" }}>
+                       <FileText size={12} /> PDF
+                     </Button>
+                     <Button variant="secondary" style={{ fontSize: "0.6875rem", padding: "0.5rem 0.75rem", display: "flex", gap: "4px" }}>
+                       <FileText size={12} /> XML
+                     </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Action buttons */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1rem", borderTop: "1px solid rgba(85,67,53,0.15)", flexWrap: "wrap", gap: "0.75rem" }}>
             <div style={{ display: "flex", gap: "0.5rem" }}>

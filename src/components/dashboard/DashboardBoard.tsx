@@ -2,22 +2,25 @@
 
 import { useState } from "react";
 import { TrendingUp, Target, Activity, AlertTriangle, ArrowUpRight, Clock, Download, Loader2 } from "lucide-react";
-import { kpis, dados7d, dados30d, dados90d, dadosYtd } from "@/lib/mock-data";
+import { kpis, leadFlow7d, leadFlow30d, leadFlow90d, leadFlowYtd, slaData } from "@/lib/mock-data";
 import { KpiCard } from "./primitives";
 import Modal from "@/components/ui/Modal";
 import { useToast } from "@/components/ui/Toast";
 import { Button } from "@/components/ui/Button";
 import { AlertasBanner } from "./AlertasBanner";
 import { ProductionCharts } from "./ProductionCharts";
+import { RankingPanel } from "./RankingPanel";
 import { DistribuicaoBarChart } from "./DistribuicaoBarChart";
+import { ProductHighlightCard } from "./ProductHighlightCard";
 import { DATE_RANGES } from "./types";
 import type { RangeKey } from "./types";
+import { useMediaQuery } from "@/lib/use-media-query";
 
-const RANGE_DATA: Record<RangeKey, typeof dados7d> = {
-  "7d":  dados7d,
-  "30d": dados30d,
-  "90d": dados90d,
-  "ytd": dadosYtd,
+const RANGE_DATA: Record<RangeKey, typeof leadFlow7d> = {
+  "7d":  leadFlow7d,
+  "30d": leadFlow30d,
+  "90d": leadFlow90d,
+  "ytd": leadFlowYtd,
 };
 
 export function DashboardBoard() {
@@ -26,6 +29,7 @@ export function DashboardBoard() {
   const [isExporting, setIsExporting] = useState(false);
   const { showToast } = useToast();
   const chartData = RANGE_DATA[range];
+  const isMobile = useMediaQuery("(max-width: 1024px)");
 
   const metaPercent   = Math.round((kpis.pedidosMes / kpis.metaMensal) * 100);
   const receitaGrowth = Math.round(((kpis.receitaMes - kpis.receitaMesAnterior) / kpis.receitaMesAnterior) * 100);
@@ -107,12 +111,22 @@ export function DashboardBoard() {
         {/* ── Alertas críticos ── */}
         <AlertasBanner />
 
-        {/* ── Area chart + Operators ── */}
-        <ProductionCharts range={range} chartData={chartData} />
+        {/* ── Main Layout Split ── */}
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "66% 1fr", gap: "1.5rem", alignItems: "start" }}>
+          
+          {/* Left Column: Visualizações de Dados (Charts) */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", minWidth: 0 }}>
+            <ProductionCharts range={range} chartData={chartData} />
+            <DistribuicaoBarChart chartData={slaData} />
+          </div>
 
-        {/* ── Bar chart ── */}
-        <DistribuicaoBarChart range={range} chartData={chartData} />
+          {/* Right Column: Produto e Pessoas (Wow factor + Gamification) */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", minWidth: 0 }}>
+            <ProductHighlightCard />
+            <RankingPanel />
+          </div>
 
+        </div>
       </div>
 
       {/* ── Export Modal ── */}

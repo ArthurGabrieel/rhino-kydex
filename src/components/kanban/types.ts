@@ -5,7 +5,8 @@ export type KanbanStatus =
   | "preparacao"
   | "moldagem"
   | "acabamento"
-  | "expedicao";
+  | "faturamento"
+  | "expedido";
 
 export type Prioridade = "alta" | "media" | "normal";
 export type LogKanbanTipo = "comentario" | "sistema";
@@ -41,6 +42,10 @@ export interface Pedido {
   dataVencimento?: string;
   observacoes?: string;
   logs?: LogKanban[];
+  // ─── Financeiro ───────────────────────────────────────────
+  valor?: number;         // Valor do pedido em R$
+  nfNumero?: string;      // Número da NF-e após emissão no Bling
+  nfEmitida?: boolean;    // true após integração com Bling
 }
 
 export interface Coluna {
@@ -50,11 +55,12 @@ export interface Coluna {
 }
 
 export const COLUNAS: Coluna[] = [
-  { id: "aberto", label: "Pedido Aberto", cor: "var(--on-surface-variant)" },
-  { id: "preparacao", label: "Preparação", cor: "#7ec8e0" },
-  { id: "moldagem", label: "Moldagem", cor: "var(--primary)" },
-  { id: "acabamento", label: "Acabamento", cor: "var(--secondary)" },
-  { id: "expedicao", label: "Expedição", cor: "#7ec88e" },
+  { id: "aberto",       label: "Pedido Aberto", cor: "var(--on-surface-variant)" },
+  { id: "preparacao",   label: "Preparação",    cor: "#7ec8e0" },
+  { id: "moldagem",     label: "Moldagem",      cor: "var(--primary)" },
+  { id: "acabamento",   label: "Acabamento",    cor: "var(--secondary)" },
+  { id: "faturamento",  label: "Faturamento",   cor: "#60a5fa" },  // Azul Bling
+  { id: "expedido",     label: "Expedido",      cor: "#7ec88e" },
 ];
 
 export const COLUNA_ORDER = COLUNAS.map((c) => c.id);
@@ -67,7 +73,8 @@ export const PRIORIDADE_ORDER: Record<Prioridade, number> = {
 
 export function isPedidoAtrasado(pedido: Pick<Pedido, "dataVencimento" | "status">, now = new Date()) {
   if (!pedido.dataVencimento) return false;
-  if (pedido.status === "expedicao") return false;
+  // Pedidos finalizados não estão atrasados
+  if (pedido.status === "faturamento" || pedido.status === "expedido") return false;
 
   const hoje = new Date(now);
   hoje.setHours(0, 0, 0, 0);

@@ -20,7 +20,8 @@ export type KanbanAction =
   | { type: "UPDATE_ORDER"; pedido: Partial<Pedido> & { id: string } }
   | { type: "DELETE_ORDER"; id: string }
   | { type: "ASSIGN_OPERATOR"; id: string; operador: string }
-  | { type: "ADD_COMMENT"; id: string; comentario: LogKanban };
+  | { type: "ADD_COMMENT"; id: string; comentario: LogKanban }
+  | { type: "EMIT_NF"; id: string; nfNumero: string };
 
 function nowHora() {
   const now = new Date();
@@ -150,6 +151,19 @@ export function kanbanReducer(
               }
             : p,
         ),
+      };
+    }
+
+    case "EMIT_NF": {
+      return {
+        ...state,
+        pedidos: state.pedidos.map((p) => {
+          if (p.id !== action.id) return p;
+          return appendLog(
+            { ...p, nfEmitida: true, nfNumero: action.nfNumero },
+            createSystemLog("Bling", `NF-e ${action.nfNumero} emitida com sucesso`),
+          );
+        }),
       };
     }
 
